@@ -1,0 +1,74 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output directories
+dist/
+build/
+
+# Webpack files
+*.bundle.js
+*.bundle.js.map
+
+# Temporary files
+*.tmp
+*.swp
+
+# MacOS files
+.DS_Store
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Prettier
+*.prettierignore
+
+# Environment variables
+.env
+
+# Coverage directory used by testing tools
+coverage/
+
+# Local environment configuration
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Next.js build output
+.next/
+
+# Gatsby files
+.cache/
+
+# Parcel files
+.cache
+.parcel-cache
+
+# Stylelint cache
+.stylelintcache
+
+# SvelteKit build output
+.svelte-kit/
+
+# VSCode settings
+.vscode/
