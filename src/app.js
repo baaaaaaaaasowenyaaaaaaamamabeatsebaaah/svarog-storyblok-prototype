@@ -73,13 +73,13 @@ export const createApp = (config = {}) => {
    */
   const setupRouter = () => {
     // Handle browser navigation
-    window.addEventListener('popstate', (event) => {
+    window.addEventListener('popstate', event => {
       const path = event.state?.path || window.location.pathname;
       navigateToRoute(path, false);
     });
 
     // Handle link clicks
-    document.addEventListener('click', (event) => {
+    document.addEventListener('click', event => {
       const link = event.target.closest('a[href^="/"]');
       if (
         link &&
@@ -152,7 +152,7 @@ export const createApp = (config = {}) => {
    * @param {string} path - URL path
    * @returns {string} Storyblok slug
    */
-  const pathToSlug = (path) => {
+  const pathToSlug = path => {
     if (path === '/' || path === '') return 'home';
     return path.replace(/^\//, '').replace(/\/$/, '');
   };
@@ -191,7 +191,7 @@ export const createApp = (config = {}) => {
    * Updates page metadata
    * @param {Object} story - Storyblok story
    */
-  const updatePageMetadata = (story) => {
+  const updatePageMetadata = story => {
     // Update title
     const title = story.content.title || story.name;
     document.title = title;
@@ -210,7 +210,7 @@ export const createApp = (config = {}) => {
    * Updates Open Graph meta tags
    * @param {Object} story - Storyblok story
    */
-  const updateOpenGraphTags = (story) => {
+  const updateOpenGraphTags = story => {
     const ogTags = {
       'og:title': story.content.title || story.name,
       'og:description': story.content.description || '',
@@ -233,7 +233,15 @@ export const createApp = (config = {}) => {
    * Renders error state
    * @param {Error} error - Error object
    */
-  const renderErrorState = (error) => {
+  const renderErrorState = error => {
+    let isDevelopment = false;
+    try {
+      isDevelopment = import.meta.env.MODE === 'development';
+    } catch {
+      // Fallback for environments without import.meta
+      isDevelopment = false;
+    }
+
     container.innerHTML = `
       <div class="app-error">
         <h1>Something went wrong</h1>
@@ -242,7 +250,7 @@ export const createApp = (config = {}) => {
           Try Again
         </button>
         ${
-          import.meta.env.MODE === 'development'
+          isDevelopment
             ? `
           <details class="error-details">
             <summary>Error Details</summary>
@@ -259,8 +267,8 @@ export const createApp = (config = {}) => {
    * Handles story changes from live preview
    * @param {Object} story - Updated story data
    */
-  const handleStoryChange = async (story) => {
-    console.log('📝 Story updated via live preview');
+  const handleStoryChange = async story => {
+    console.log('📝 Story updated via live preview', story);
 
     try {
       // Refresh current route
@@ -274,7 +282,7 @@ export const createApp = (config = {}) => {
    * Changes the application theme
    * @param {string} themeName - Theme name ('default', 'cabalou', 'muchandy')
    */
-  const changeTheme = (themeName) => {
+  const changeTheme = themeName => {
     switchTheme(themeName);
 
     // Dispatch theme change event
@@ -324,14 +332,26 @@ export const createApp = (config = {}) => {
     console.log('✅ Application destroyed');
   };
 
-  return {
+  const api = {
     init,
     navigateToRoute,
     changeTheme,
     getStatus,
     destroy,
-
-    // Expose for debugging
-    storyblok: import.meta.env.MODE === 'development' ? storyblok : undefined,
   };
+
+  // Expose for debugging in development only
+  let isDevelopment = false;
+  try {
+    isDevelopment = import.meta.env.MODE === 'development';
+  } catch {
+    // Fallback for environments without import.meta
+    isDevelopment = false;
+  }
+
+  if (isDevelopment) {
+    api.storyblok = storyblok;
+  }
+
+  return api;
 };

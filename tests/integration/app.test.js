@@ -3,7 +3,7 @@
  * Tests the main app functionality and routing
  */
 
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createApp } from '../../src/app.js';
 import { createTestContainer } from '../setup.js';
 

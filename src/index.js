@@ -21,7 +21,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Determine environment settings
-    const isDevelopment = import.meta.env.MODE === 'development';
+    let isDevelopment = false;
+    try {
+      isDevelopment = import.meta.env.MODE === 'development';
+    } catch {
+      // Fallback for environments without import.meta
+      isDevelopment = false;
+    }
+
     const savedTheme = localStorage.getItem('svarog-theme');
 
     // Create and initialize app
@@ -37,7 +44,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isDevelopment) {
       // Make app globally available for debugging
       window.app = app;
-      window.svarog = await import('svarog-ui');
+      const svarogModule = await import('svarog-ui');
+      window.svarog = svarogModule;
 
       // Log helpful info
       console.log('🔧 Development mode active');
@@ -47,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Set up global error handling
-    window.addEventListener('error', (event) => {
+    window.addEventListener('error', event => {
       console.error('Global error:', event.error);
 
       if (isDevelopment) {
@@ -57,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
-    window.addEventListener('unhandledrejection', (event) => {
+    window.addEventListener('unhandledrejection', event => {
       console.error('Unhandled promise rejection:', event.reason);
       event.preventDefault();
     });
@@ -65,53 +73,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('❌ App initialization failed:', error);
 
     // Show fallback error UI
-    document.getElementById('app').innerHTML = `
-      <div style="
-        text-align: center;
-        padding: 2rem;
-        max-width: 600px;
-        margin: 2rem auto;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      ">
-        <h1 style="color: #dc3545; margin-bottom: 1rem;">
-          Application Error
-        </h1>
-        <p style="margin-bottom: 1.5rem; color: #666;">
-          The application failed to start. Please check the console for details.
-        </p>
-        <button 
-          onclick="window.location.reload()" 
-          style="
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-          "
-        >
-          Reload Page
-        </button>
-        ${
-          import.meta.env.MODE === 'development'
-            ? `
-          <details style="margin-top: 1rem; text-align: left;">
-            <summary>Error Details</summary>
-            <pre style="
-              background: #f8f9fa;
-              padding: 1rem;
+    const appContainer = document.getElementById('app');
+    if (appContainer) {
+      let isDevelopment = false;
+      try {
+        isDevelopment = import.meta.env.MODE === 'development';
+      } catch {
+        // Fallback for environments without import.meta
+        isDevelopment = false;
+      }
+
+      appContainer.innerHTML = `
+        <div style="
+          text-align: center;
+          padding: 2rem;
+          max-width: 600px;
+          margin: 2rem auto;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        ">
+          <h1 style="color: #dc3545; margin-bottom: 1rem;">
+            Application Error
+          </h1>
+          <p style="margin-bottom: 1.5rem; color: #666;">
+            The application failed to start. Please check the console for details.
+          </p>
+          <button 
+            onclick="window.location.reload()" 
+            style="
+              background: #007bff;
+              color: white;
+              border: none;
+              padding: 0.75rem 1.5rem;
               border-radius: 4px;
-              overflow: auto;
-              font-size: 0.875rem;
-              margin-top: 0.5rem;
-            ">${error.stack}</pre>
-          </details>
-        `
-            : ''
-        }
-      </div>
-    `;
+              cursor: pointer;
+              font-size: 1rem;
+            "
+          >
+            Reload Page
+          </button>
+          ${
+            isDevelopment
+              ? `
+            <details style="margin-top: 1rem; text-align: left;">
+              <summary>Error Details</summary>
+              <pre style="
+                background: #f8f9fa;
+                padding: 1rem;
+                border-radius: 4px;
+                overflow: auto;
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+              ">${error.stack}</pre>
+            </details>
+          `
+              : ''
+          }
+        </div>
+      `;
+    }
   }
 });
 
@@ -169,17 +188,33 @@ function createErrorOverlay(error) {
 }
 
 // Performance monitoring
-if (import.meta.env.MODE === 'development') {
+let isDevelopment = false;
+try {
+  isDevelopment = import.meta.env.MODE === 'development';
+} catch {
+  // Fallback for environments without import.meta
+  isDevelopment = false;
+}
+
+if (isDevelopment) {
   window.addEventListener('load', () => {
     setTimeout(() => {
       const navigation = performance.getEntriesByType('navigation')[0];
-      console.log('📊 Performance Metrics:', {
-        'Total Load Time': `${Math.round(navigation.loadEventEnd - navigation.fetchStart)}ms`,
-        'DOM Content Loaded': `${Math.round(navigation.domContentLoadedEventEnd - navigation.fetchStart)}ms`,
-        'First Paint': performance.getEntriesByType('paint')[0]?.startTime
-          ? `${Math.round(performance.getEntriesByType('paint')[0].startTime)}ms`
-          : 'N/A',
-      });
+      if (navigation) {
+        console.log('📊 Performance Metrics:', {
+          'Total Load Time': `${Math.round(
+            navigation.loadEventEnd - navigation.fetchStart
+          )}ms`,
+          'DOM Content Loaded': `${Math.round(
+            navigation.domContentLoadedEventEnd - navigation.fetchStart
+          )}ms`,
+          'First Paint': performance.getEntriesByType('paint')[0]?.startTime
+            ? `${Math.round(
+                performance.getEntriesByType('paint')[0].startTime
+              )}ms`
+            : 'N/A',
+        });
+      }
     }, 0);
   });
 }
