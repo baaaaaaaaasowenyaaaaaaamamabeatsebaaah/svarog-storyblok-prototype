@@ -24,6 +24,8 @@
     "audit:check": "npm audit --audit-level moderate"
   },
   "dependencies": {
+    "compression": "^1.8.0",
+    "dompurify": "^3.2.6",
     "express": "^4.19.2",
     "storyblok-js-client": "^6.7.0",
     "svarog-ui": "^1.0.0"

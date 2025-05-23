@@ -3,6 +3,7 @@
  * Provides efficient validation for CMS content and component props
  */
 
+import DOMPurify from 'dompurify';
 import { getValidationSchema } from '../../config/components.js';
 
 /**
@@ -259,16 +260,49 @@ const validateRichText = (richText, fieldName) => {
 };
 
 /**
- * Sanitizes HTML content to prevent XSS
+ * Sanitizes HTML content to prevent XSS using DOMPurify
  * @param {string} html - HTML content to sanitize
  * @returns {string} Sanitized HTML
  */
-export const sanitizeHTML = (html) => {
-  // Basic HTML sanitization - in production, use a library like DOMPurify
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+\s*=/gi, '');
+export const sanitizeHTML = html => {
+  if (typeof window === 'undefined') {
+    // Server-side or test environment
+    // Return a basic sanitization for non-browser environments
+    return html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '');
+  }
+
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      'p',
+      'br',
+      'strong',
+      'b',
+      'em',
+      'i',
+      'u',
+      'a',
+      'ul',
+      'ol',
+      'li',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'blockquote',
+      'code',
+      'pre',
+      'span',
+    ],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'id'],
+    ALLOW_DATA_ATTR: false,
+    FORBID_TAGS: ['script', 'style'],
+    FORBID_ATTR: ['onerror', 'onclick', 'onload', 'onmouseover'],
+  });
 };
 
 /**
@@ -276,7 +310,7 @@ export const sanitizeHTML = (html) => {
  * @param {string} url - URL to validate
  * @returns {boolean} True if valid URL
  */
-export const isValidURL = (url) => {
+export const isValidURL = url => {
   try {
     new URL(url);
     return true;
@@ -290,7 +324,7 @@ export const isValidURL = (url) => {
  * @param {string} email - Email to validate
  * @returns {boolean} True if valid email
  */
-export const isValidEmail = (email) => {
+export const isValidEmail = email => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
