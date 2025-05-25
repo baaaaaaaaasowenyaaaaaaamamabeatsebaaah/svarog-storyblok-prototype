@@ -1,7 +1,77 @@
 // File: src/types/jsdoc.js
 /**
  * JSDoc type definitions for the Svarog-UI + Storyblok integration
- * Central location for all shared type definitions
+ * Updated with actual svarog-ui exports
+ */
+
+/**
+ * @typedef {Object} SvarogComponent
+ * @property {Function} getElement - Returns DOM element
+ * @property {Function} [update] - Updates component state
+ * @property {Function} destroy - Cleanup function
+ */
+
+/**
+ * @typedef {Function} SvarogComponentFactory
+ * @param {Object} props - Component properties
+ * @returns {SvarogComponent} Component instance
+ */
+
+/**
+ * Svarog UI Component Factories (based on actual exports)
+ * @typedef {Object} SvarogUIComponents
+ * @property {SvarogComponentFactory} BlogCard
+ * @property {SvarogComponentFactory} BlogDetail
+ * @property {SvarogComponentFactory} BlogList
+ * @property {SvarogComponentFactory} Button
+ * @property {SvarogComponentFactory} Card
+ * @property {SvarogComponentFactory} Checkbox
+ * @property {SvarogComponentFactory} CollapsibleHeader
+ * @property {SvarogComponentFactory} ConditionSelector
+ * @property {SvarogComponentFactory} ContactInfo
+ * @property {SvarogComponentFactory} Content
+ * @property {SvarogComponentFactory} Footer
+ * @property {SvarogComponentFactory} Form
+ * @property {SvarogComponentFactory} FormActions
+ * @property {SvarogComponentFactory} FormGroup
+ * @property {SvarogComponentFactory} FormSection
+ * @property {SvarogComponentFactory} Forms
+ * @property {SvarogComponentFactory} Grid
+ * @property {SvarogComponentFactory} Head
+ * @property {SvarogComponentFactory} Header
+ * @property {SvarogComponentFactory} Hero
+ * @property {SvarogComponentFactory} Image
+ * @property {SvarogComponentFactory} Input
+ * @property {SvarogComponentFactory} Layout
+ * @property {SvarogComponentFactory} Link
+ * @property {SvarogComponentFactory} Logo
+ * @property {SvarogComponentFactory} Map
+ * @property {SvarogComponentFactory} MuchandyHero
+ * @property {SvarogComponentFactory} Nav
+ * @property {SvarogComponentFactory} Navigation
+ * @property {SvarogComponentFactory} Page
+ * @property {SvarogComponentFactory} Pagination
+ * @property {SvarogComponentFactory} PhoneRepairForm
+ * @property {SvarogComponentFactory} PhoneRepairFormContainer
+ * @property {SvarogComponentFactory} PriceDisplay
+ * @property {SvarogComponentFactory} ProductCard
+ * @property {SvarogComponentFactory} Radio
+ * @property {SvarogComponentFactory} RadioGroup
+ * @property {SvarogComponentFactory} Rating
+ * @property {SvarogComponentFactory} Section
+ * @property {SvarogComponentFactory} Select
+ * @property {SvarogComponentFactory} StepsIndicator
+ * @property {SvarogComponentFactory} StickyContactIcons
+ * @property {SvarogComponentFactory} Tabs
+ * @property {SvarogComponentFactory} Typography - Text component for content
+ * @property {SvarogComponentFactory} UI
+ * @property {SvarogComponentFactory} UsedPhonePriceForm
+ * @property {SvarogComponentFactory} UsedPhonePriceFormContainer
+ * @property {SvarogComponentFactory} Utils
+ * @property {Function} getCurrentTheme - Get current theme name
+ * @property {Function} setThemeVariable - Set theme CSS variable
+ * @property {Function} switchTheme - Switch to different theme
+ * @property {Object} themeManager - Theme management utilities
  */
 
 /**
@@ -60,13 +130,6 @@
  */
 
 /**
- * @typedef {Object} SvarogComponent
- * @property {Function} getElement - Returns DOM element
- * @property {Function} update - Updates component state
- * @property {Function} destroy - Cleanup function
- */
-
-/**
  * @typedef {Object} SvarogButtonProps
  * @property {string} text - Button text
  * @property {string} [href] - Link URL
@@ -75,6 +138,15 @@
  * @property {boolean} [disabled=false] - Disabled state
  * @property {Function} [onClick] - Click handler
  * @property {string} [theme='default'] - Theme name
+ */
+
+/**
+ * @typedef {Object} SvarogTypographyProps
+ * @property {string} content - Typography content (HTML or text)
+ * @property {string} [variant='body'] - Typography variant
+ * @property {string} [alignment='left'] - Text alignment
+ * @property {string} [theme='default'] - Theme name
+ * @property {string} [tag='p'] - HTML tag to use
  */
 
 /**
