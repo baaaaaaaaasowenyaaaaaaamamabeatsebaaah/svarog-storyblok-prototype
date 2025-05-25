@@ -1,3 +1,4 @@
+// File: src/app.js
 /**
  * Main application integrating Svarog-UI with Storyblok
  * Handles routing, theme management, and component rendering
@@ -5,6 +6,14 @@
 
 import { switchTheme, getCurrentTheme } from 'svarog-ui';
 import { createStoryblokClient } from './integration/storyblokClient.js';
+import { createRouter } from './utils/router/index.js';
+import errorBoundary, {
+  AppError,
+  ErrorTypes,
+} from './utils/errors/errorBoundary.js';
+import webVitalsMonitor from './utils/performance/webVitals.js';
+import debugPanel from './utils/debug/debugPanel.js';
+import { isDevelopment } from './utils/environment.js';
 
 /**
  * Creates the main application

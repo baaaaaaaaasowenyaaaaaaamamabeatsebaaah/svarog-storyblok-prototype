@@ -1,6 +1,9 @@
 # Svarog-UI + Storyblok Integration
 
-A seamless integration between the [Svarog-UI Component Library](https://github.com/your-org/svarog-ui) and [Storyblok CMS](https://www.storyblok.com/), enabling content-driven web applications with powerful theming and component reusability.
+A seamless integration between the
+[Svarog-UI Component Library](https://github.com/your-org/svarog-ui) and
+[Storyblok CMS](https://www.storyblok.com/), enabling content-driven web applications with powerful
+theming and component reusability.
 
 ## 🚀 Features
 
@@ -9,7 +12,7 @@ A seamless integration between the [Svarog-UI Component Library](https://github.
 - **Dynamic Theming** - Real-time theme switching with Svarog-UI's theme system
 - **Live Preview** - Storyblok Visual Editor integration for real-time content editing
 - **Performance Optimized** - Intelligent caching and component reuse
-- **TypeScript Ready** - Full type safety throughout the integration
+- **JSDoc Type Safety** - Full IntelliSense support without build complexity
 - **Railway Deployment** - Production-ready Express server for Railway hosting
 
 ## 🏗️ Architecture
@@ -340,7 +343,7 @@ const story = await client.getStoryWithComponents('home');
 const rendered = await client.renderStoryToContainer('home', container);
 
 // Enable live preview
-client.enableLivePreview((story) => {
+client.enableLivePreview(story => {
   console.log('Story updated:', story);
 });
 ```
@@ -348,10 +351,7 @@ client.enableLivePreview((story) => {
 ### Component Mapper
 
 ```javascript
-import {
-  createComponent,
-  registerComponent,
-} from './integration/componentMapper.js';
+import { createComponent, registerComponent } from './integration/componentMapper.js';
 
 // Create component from CMS data
 const component = createComponent(storyblokBlock);

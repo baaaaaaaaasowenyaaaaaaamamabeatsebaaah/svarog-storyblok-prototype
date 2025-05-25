@@ -1,3 +1,4 @@
+// File: src/index.js
 /**
  * Main entry point for Svarog-UI + Storyblok integration
  * This file is loaded by Webpack and initializes the application
@@ -6,8 +7,12 @@
 // Import Svarog-UI CSS
 import 'svarog-ui/dist/svarog-ui.css';
 
+// Import our application styles
+import './styles/main.css';
+
 // Import our application
 import { createApp } from './app.js';
+import { registerCustomComponents } from './components/ExampleExtension.js';
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
