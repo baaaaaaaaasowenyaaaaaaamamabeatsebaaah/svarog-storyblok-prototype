@@ -232,7 +232,7 @@ export const COMPONENT_SCHEMAS = {
  * @param {string} componentName - Name of the component
  * @returns {Function|null} Component factory function
  */
-export const getComponentFactory = (componentName) => {
+export const getComponentFactory = componentName => {
   return COMPONENT_FACTORIES.get(componentName) || null;
 };
 
@@ -241,7 +241,7 @@ export const getComponentFactory = (componentName) => {
  * @param {string} cmsComponentType - CMS component type
  * @returns {string|null} Svarog-UI component name
  */
-export const getCMSMapping = (cmsComponentType) => {
+export const getCMSMapping = cmsComponentType => {
   return CMS_COMPONENT_MAP.get(cmsComponentType) || null;
 };
 
@@ -250,7 +250,7 @@ export const getCMSMapping = (cmsComponentType) => {
  * @param {string} componentType - Component type
  * @returns {Object|null} Validation schema
  */
-export const getValidationSchema = (componentType) => {
+export const getValidationSchema = componentType => {
   return COMPONENT_SCHEMAS[componentType] || null;
 };
 

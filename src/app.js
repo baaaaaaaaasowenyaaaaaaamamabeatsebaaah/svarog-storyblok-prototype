@@ -6,13 +6,6 @@
 
 import { switchTheme, getCurrentTheme } from 'svarog-ui';
 import { createStoryblokClient } from './integration/storyblokClient.js';
-import { createRouter } from './utils/router/index.js';
-import errorBoundary, {
-  AppError,
-  ErrorTypes,
-} from './utils/errors/errorBoundary.js';
-import webVitalsMonitor from './utils/performance/webVitals.js';
-import debugPanel from './utils/debug/debugPanel.js';
 import { isDevelopment } from './utils/environment.js';
 
 /**
@@ -46,8 +39,12 @@ export const createApp = (config = {}) => {
    */
   const init = async () => {
     try {
-      console.log('🚀 Initializing Svarog-UI + Storyblok App');
-      console.log(`🎨 Theme: ${getCurrentTheme()}`);
+      if (isDevelopment()) {
+         
+        console.log('🚀 Initializing Svarog-UI + Storyblok App');
+         
+        console.log(`🎨 Theme: ${getCurrentTheme()}`);
+      }
 
       // Set up routing
       setupRouter();
@@ -70,8 +67,12 @@ export const createApp = (config = {}) => {
         })
       );
 
-      console.log('✅ App initialized successfully');
+      if (isDevelopment()) {
+         
+        console.log('✅ App initialized successfully');
+      }
     } catch (error) {
+       
       console.error('❌ App initialization failed:', error);
       renderErrorState(error);
     }
@@ -144,6 +145,7 @@ export const createApp = (config = {}) => {
         })
       );
     } catch (error) {
+       
       console.error(`Navigation failed for ${path}:`, error);
       hideLoadingState();
 
@@ -243,12 +245,12 @@ export const createApp = (config = {}) => {
    * @param {Error} error - Error object
    */
   const renderErrorState = error => {
-    let isDevelopment = false;
+    let isDevelopmentMode = false;
     try {
-      isDevelopment = import.meta.env.MODE === 'development';
+      isDevelopmentMode = import.meta.env.MODE === 'development';
     } catch {
       // Fallback for environments without import.meta
-      isDevelopment = false;
+      isDevelopmentMode = false;
     }
 
     container.innerHTML = `
@@ -259,7 +261,7 @@ export const createApp = (config = {}) => {
           Try Again
         </button>
         ${
-          isDevelopment
+          isDevelopmentMode
             ? `
           <details class="error-details">
             <summary>Error Details</summary>
@@ -277,12 +279,16 @@ export const createApp = (config = {}) => {
    * @param {Object} story - Updated story data
    */
   const handleStoryChange = async story => {
-    console.log('📝 Story updated via live preview', story);
+    if (isDevelopment()) {
+       
+      console.log('📝 Story updated via live preview', story);
+    }
 
     try {
       // Refresh current route
       await storyblok.refreshStory(pathToSlug(currentRoute), container);
     } catch (error) {
+       
       console.error('Failed to refresh story:', error);
     }
   };
@@ -301,7 +307,10 @@ export const createApp = (config = {}) => {
       })
     );
 
-    console.log(`🎨 Theme changed to: ${themeName}`);
+    if (isDevelopment()) {
+       
+      console.log(`🎨 Theme changed to: ${themeName}`);
+    }
   };
 
   /**
@@ -322,7 +331,10 @@ export const createApp = (config = {}) => {
    * Destroys the application and cleans up
    */
   const destroy = () => {
-    console.log('🔄 Destroying application...');
+    if (isDevelopment()) {
+       
+      console.log('🔄 Destroying application...');
+    }
 
     // Destroy current story
     if (currentStory && currentStory.destroy) {
@@ -338,7 +350,10 @@ export const createApp = (config = {}) => {
     // Remove ready class
     document.body.classList.remove('app-ready');
 
-    console.log('✅ Application destroyed');
+    if (isDevelopment()) {
+       
+      console.log('✅ Application destroyed');
+    }
   };
 
   const api = {
@@ -350,15 +365,7 @@ export const createApp = (config = {}) => {
   };
 
   // Expose for debugging in development only
-  let isDevelopment = false;
-  try {
-    isDevelopment = import.meta.env.MODE === 'development';
-  } catch {
-    // Fallback for environments without import.meta
-    isDevelopment = false;
-  }
-
-  if (isDevelopment) {
+  if (isDevelopment()) {
     api.storyblok = storyblok;
   }
 

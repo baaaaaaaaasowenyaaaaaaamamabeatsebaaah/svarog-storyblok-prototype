@@ -302,7 +302,7 @@ export class Router {
    */
   async runBeforeHooks(to, from) {
     for (const hook of this.beforeHooks) {
-      const result = await hook(to, from);
+      const result = await hook(_to, _from);
       if (result === false) return false;
     }
     return true;
@@ -313,9 +313,9 @@ export class Router {
    * @param {string} to - Target path
    * @param {string} from - Previous path
    */
-  async runAfterHooks(to, from) {
+  async runAfterHooks(_to, _from) {
     for (const hook of this.afterHooks) {
-      await hook(to, from);
+      await hook(_to, _from);
     }
   }
 
@@ -404,7 +404,7 @@ export const createRouter = (options = {}) => {
   });
 
   // Add navigation guards
-  router.beforeEach((to, from) => {
+  router.beforeEach((_to, _from) => {
     // Add your navigation guards here
     return true;
   });

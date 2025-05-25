@@ -391,7 +391,6 @@ export class DebugPanel {
    * Render performance tab
    */
   renderPerformance() {
-    const metrics = webVitalsMonitor.getMetrics();
     const summary = webVitalsMonitor.getSummary();
 
     return `

@@ -489,27 +489,31 @@ export const handlePoorPerformance = metric => {
     // Implement performance optimizations
     switch (metric.name) {
       case 'CLS':
-        // Add dimensions to images/videos
-        document
-          .querySelectorAll('img:not([width]), video:not([width])')
-          .forEach(el => {
-            if (el.naturalWidth) {
-              el.setAttribute('width', el.naturalWidth);
-              el.setAttribute('height', el.naturalHeight);
-            }
-          });
+        {
+          // Add dimensions to images/videos
+          document
+            .querySelectorAll('img:not([width]), video:not([width])')
+            .forEach(el => {
+              if (el.naturalWidth) {
+                el.setAttribute('width', el.naturalWidth);
+                el.setAttribute('height', el.naturalHeight);
+              }
+            });
+        }
         break;
 
       case 'LCP':
-        // Preload critical resources
-        const lcpElement = metric.entries?.[0]?.element;
-        if (lcpElement?.src) {
-          const link = document.createElement('link');
-          link.rel = 'preload';
-          link.as =
-            lcpElement.tagName.toLowerCase() === 'img' ? 'image' : 'fetch';
-          link.href = lcpElement.src;
-          document.head.appendChild(link);
+        {
+          // Preload critical resources
+          const lcpElement = metric.entries?.[0]?.element;
+          if (lcpElement?.src) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as =
+              lcpElement.tagName.toLowerCase() === 'img' ? 'image' : 'fetch';
+            link.href = lcpElement.src;
+            document.head.appendChild(link);
+          }
         }
         break;
     }

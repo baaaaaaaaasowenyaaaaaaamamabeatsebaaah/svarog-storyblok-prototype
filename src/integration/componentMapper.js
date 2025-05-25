@@ -13,6 +13,7 @@ import {
   sanitizeHTML,
 } from '../utils/validation/index.js';
 import { memoize } from '../utils/algorithms/index.js';
+import { isDevelopment } from '../utils/environment.js';
 
 /**
  * Main component creation function with validation and caching
@@ -21,7 +22,10 @@ import { memoize } from '../utils/algorithms/index.js';
  */
 export const createComponent = cmsComponent => {
   if (!cmsComponent || !cmsComponent.component) {
-    console.warn('Invalid CMS component data:', cmsComponent);
+    if (isDevelopment()) {
+       
+      console.warn('Invalid CMS component data:', cmsComponent);
+    }
     return null;
   }
 
@@ -29,13 +33,19 @@ export const createComponent = cmsComponent => {
   const svarogComponentName = getCMSMapping(componentType);
 
   if (!svarogComponentName) {
-    console.warn(`No mapping found for component type: ${componentType}`);
+    if (isDevelopment()) {
+       
+      console.warn(`No mapping found for component type: ${componentType}`);
+    }
     return createFallbackComponent(cmsComponent);
   }
 
   const factory = getComponentFactory(svarogComponentName);
   if (!factory) {
-    console.warn(`No factory found for component: ${svarogComponentName}`);
+    if (isDevelopment()) {
+       
+      console.warn(`No factory found for component: ${svarogComponentName}`);
+    }
     return createFallbackComponent(cmsComponent);
   }
 
@@ -52,6 +62,7 @@ export const createComponent = cmsComponent => {
     // Create component instance
     return factory(transformedProps);
   } catch (error) {
+     
     console.error(`Error creating component ${componentType}:`, error);
     return createFallbackComponent(cmsComponent, error);
   }
@@ -124,7 +135,7 @@ const transformButtonProps = props => ({
   size: props.size || 'medium',
   disabled: props.disabled || false,
   theme: props.theme || 'default',
-  onClick: event => {
+  onClick: () => {
     // Track button clicks for analytics
     if (window.analytics) {
       window.analytics.track('Button Clicked', {
@@ -264,6 +275,7 @@ const createFallbackComponent = (cmsComponent, error = null) => {
   const fallbackFactory = getComponentFactory('Typography');
 
   if (!fallbackFactory) {
+     
     console.error('Typography component not available for fallback');
     return null;
   }
@@ -289,16 +301,18 @@ const convertRichTextToHTML = memoize(richText => {
 
   const convertNode = node => {
     switch (node.type) {
-      case 'paragraph':
+      case 'paragraph': {
         const paragraphContent = node.content?.map(convertNode).join('') || '';
         return `<p>${paragraphContent}</p>`;
+      }
 
-      case 'heading':
+      case 'heading': {
         const level = node.attrs?.level || 1;
         const headingContent = node.content?.map(convertNode).join('') || '';
         return `<h${level}>${headingContent}</h${level}>`;
+      }
 
-      case 'text':
+      case 'text': {
         let text = node.text || '';
 
         // Apply marks (bold, italic, etc.)
@@ -319,16 +333,19 @@ const convertRichTextToHTML = memoize(richText => {
         }
 
         return text;
+      }
 
       case 'bullet_list':
-      case 'ordered_list':
+      case 'ordered_list': {
         const listTag = node.type === 'bullet_list' ? 'ul' : 'ol';
         const listContent = node.content?.map(convertNode).join('') || '';
         return `<${listTag}>${listContent}</${listTag}>`;
+      }
 
-      case 'list_item':
+      case 'list_item': {
         const itemContent = node.content?.map(convertNode).join('') || '';
         return `<li>${itemContent}</li>`;
+      }
 
       default:
         return node.content?.map(convertNode).join('') || '';

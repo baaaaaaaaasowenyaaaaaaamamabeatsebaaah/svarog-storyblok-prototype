@@ -5,19 +5,21 @@
  */
 
 // Import Svarog-UI CSS
-import 'svarog-ui/dist/svarog-ui.css';
+import 'svarog-ui/dist/styles.css';
 
 // Import our application styles
 import './styles/main.css';
 
 // Import our application
 import { createApp } from './app.js';
-import { registerCustomComponents } from './components/ExampleExtension.js';
+import { isDevelopment } from './utils/environment.js';
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    console.log('🚀 Starting Svarog-UI + Storyblok Integration');
+    if (isDevelopment()) {
+      console.log('🚀 Starting Svarog-UI + Storyblok Integration');
+    }
 
     // Get app container
     const container = document.getElementById('app');
@@ -26,36 +28,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Determine environment settings
-    let isDevelopment = false;
-    try {
-      isDevelopment = import.meta.env.MODE === 'development';
-    } catch {
-      // Fallback for environments without import.meta
-      isDevelopment = false;
-    }
-
     const savedTheme = localStorage.getItem('svarog-theme');
 
     // Create and initialize app
     const app = createApp({
       container,
       theme: savedTheme || 'default',
-      enableLivePreview: isDevelopment,
+      enableLivePreview: isDevelopment(),
     });
 
     await app.init();
 
     // Development utilities
-    if (isDevelopment) {
+    if (isDevelopment()) {
       // Make app globally available for debugging
       window.app = app;
       const svarogModule = await import('svarog-ui');
       window.svarog = svarogModule;
 
       // Log helpful info
+
       console.log('🔧 Development mode active');
+
       console.log('📚 Access app via window.app');
+
       console.log('🎨 Access Svarog-UI via window.svarog');
+
       console.log('🎯 App status:', app.getStatus());
     }
 
@@ -63,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('error', event => {
       console.error('Global error:', event.error);
 
-      if (isDevelopment) {
+      if (isDevelopment()) {
         // Show detailed error in development
         const errorOverlay = createErrorOverlay(event.error);
         document.body.appendChild(errorOverlay);
@@ -80,14 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Show fallback error UI
     const appContainer = document.getElementById('app');
     if (appContainer) {
-      let isDevelopment = false;
-      try {
-        isDevelopment = import.meta.env.MODE === 'development';
-      } catch {
-        // Fallback for environments without import.meta
-        isDevelopment = false;
-      }
-
       appContainer.innerHTML = `
         <div style="
           text-align: center;
@@ -117,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             Reload Page
           </button>
           ${
-            isDevelopment
+            isDevelopment()
               ? `
             <details style="margin-top: 1rem; text-align: left;">
               <summary>Error Details</summary>
@@ -193,15 +183,7 @@ function createErrorOverlay(error) {
 }
 
 // Performance monitoring
-let isDevelopment = false;
-try {
-  isDevelopment = import.meta.env.MODE === 'development';
-} catch {
-  // Fallback for environments without import.meta
-  isDevelopment = false;
-}
-
-if (isDevelopment) {
+if (isDevelopment()) {
   window.addEventListener('load', () => {
     setTimeout(() => {
       const navigation = performance.getEntriesByType('navigation')[0];

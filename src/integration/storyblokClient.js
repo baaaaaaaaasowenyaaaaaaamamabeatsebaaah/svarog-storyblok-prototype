@@ -5,7 +5,6 @@
 
 import StoryblokClient from 'storyblok-js-client';
 import { createComponent } from './componentMapper.js';
-
 /**
  * Creates an enhanced Storyblok client with Svarog-UI integration
  * @param {Object} config - Configuration object
@@ -15,7 +14,6 @@ export const createStoryblokClient = (config = {}) => {
   const {
     accessToken = import.meta.env.VITE_STORYBLOK_TOKEN,
     version = import.meta.env.VITE_STORYBLOK_VERSION || 'published',
-    cache = true,
     region = 'eu',
   } = config;
 
@@ -86,7 +84,7 @@ export const createStoryblokClient = (config = {}) => {
 
       // Create components for each story
       const storiesWithComponents = await Promise.all(
-        stories.map(async (story) => {
+        stories.map(async story => {
           const renderedComponents = await createComponentsFromStory(story);
           return {
             ...story,
@@ -107,7 +105,7 @@ export const createStoryblokClient = (config = {}) => {
    * @param {Object} story - Storyblok story object
    * @returns {Promise<Array>} Array of rendered component instances
    */
-  const createComponentsFromStory = async (story) => {
+  const createComponentsFromStory = async story => {
     if (!story.content || !story.content.body) {
       return [];
     }
@@ -126,8 +124,8 @@ export const createStoryblokClient = (config = {}) => {
     try {
       // Create components from story body
       const components = story.content.body
-        .map((block) => createComponent(block))
-        .filter((component) => component !== null);
+        .map(block => createComponent(block))
+        .filter(component => component !== null);
 
       // Cache the result
       componentCache.set(cacheKey, {
@@ -156,7 +154,7 @@ export const createStoryblokClient = (config = {}) => {
     // Clear existing content
     container.innerHTML = '';
 
-    const elements = components.map((component) => {
+    const elements = components.map(component => {
       const element = component.getElement();
       container.appendChild(element);
       return element;
@@ -184,7 +182,7 @@ export const createStoryblokClient = (config = {}) => {
       elements,
       destroy: () => {
         // Cleanup all component instances
-        storyWithComponents.renderedComponents.forEach((component) => {
+        storyWithComponents.renderedComponents.forEach(component => {
           if (component.destroy) {
             component.destroy();
           }
@@ -201,10 +199,10 @@ export const createStoryblokClient = (config = {}) => {
    */
   const refreshStory = async (slug, container) => {
     // Clear cache for this story
-    const cacheKeys = Array.from(componentCache.keys()).filter((key) =>
+    const cacheKeys = Array.from(componentCache.keys()).filter(key =>
       key.includes(slug)
     );
-    cacheKeys.forEach((key) => componentCache.delete(key));
+    cacheKeys.forEach(key => componentCache.delete(key));
 
     // Re-fetch and render
     return await renderStoryToContainer(slug, container, { cb: Date.now() });
@@ -237,9 +235,9 @@ export const createStoryblokClient = (config = {}) => {
    * Enables live preview for Storyblok Visual Editor
    * @param {Function} onStoryChange - Callback when story changes
    */
-  const enableLivePreview = (onStoryChange) => {
+  const enableLivePreview = onStoryChange => {
     if (window.storyblok) {
-      window.storyblok.on(['input', 'published', 'change'], (event) => {
+      window.storyblok.on(['input', 'published', 'change'], event => {
         if (event.action === 'input') {
           clearCache();
           if (onStoryChange) {
