@@ -1,3 +1,4 @@
+// File: webpack.config.js
 import path from 'path';
 import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -6,8 +7,9 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default (argv) => {
+export default (env, argv) => {
   const isProduction = argv.mode === 'production';
+  const isDevelopment = argv.mode === 'development';
 
   return {
     entry: './src/index.js',
@@ -68,6 +70,39 @@ export default (argv) => {
       hot: true,
       historyApiFallback: true,
       open: true,
+      // Enable HTTPS for Storyblok live preview
+      https: isDevelopment,
+      // Allow connections from Storyblok
+      allowedHosts: 'all',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers':
+          'X-Requested-With, content-type, Authorization',
+      },
+      // Custom setup for better HTTPS support
+      setupMiddlewares: (middlewares, devServer) => {
+        if (!devServer) {
+          throw new Error('webpack-dev-server is not defined');
+        }
+
+        // Log the correct HTTPS URL
+        devServer.compiler.hooks.done.tap('log-https', () => {
+          if (isDevelopment) {
+            console.log('\n🔒 HTTPS Development Server:');
+            console.log('   Local:    https://localhost:3000');
+            console.log('   Network:  https://your-ip:3000');
+            console.log('\n🎯 Use this URL in Storyblok Visual Editor:');
+            console.log('   https://localhost:3000/');
+            console.log(
+              '\n💡 If you get security warnings, click "Advanced" → "Proceed to localhost"'
+            );
+          }
+        });
+
+        return middlewares;
+      },
     },
 
     optimization: {

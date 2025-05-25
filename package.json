@@ -7,10 +7,14 @@
     "npm": ">=8.0.0"
   },
   "scripts": {
-    "dev": "webpack serve --mode development",
+    "dev": "webpack serve --mode development --open",
+    "dev:debug": "webpack serve --mode development --open --env debug=true",
     "build": "webpack --mode production",
     "start": "node server/index.js",
     "start:server": "node server/index.js",
+    "example": "npm run dev",
+    "setup": "node scripts/setup-example.js",
+    "storyblok:setup": "node scripts/storyblok-setup.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "vitest run tests/integration",
@@ -64,13 +68,22 @@
     "cms",
     "javascript",
     "component-library",
-    "integration"
+    "integration",
+    "example",
+    "demo",
+    "live-preview"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/your-org/svarog-storyblok-integration.git"
   },
   "license": "MIT",
+  "description": "Example integration between Svarog-UI component library and Storyblok CMS with live preview functionality",
+  "author": "Your Name <your.email@example.com>",
+  "homepage": "https://github.com/your-org/svarog-storyblok-integration#readme",
+  "bugs": {
+    "url": "https://github.com/your-org/svarog-storyblok-integration/issues"
+  },
   "overrides": {
     "semver": "^7.6.0",
     "braces": "^3.0.3"
