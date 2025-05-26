@@ -114,7 +114,8 @@ const transformHeroProps = props => {
   const transformed = {
     title: props.title || 'Default Hero Title',
     subtitle: props.subtitle || null,
-    backgroundImage: props.background_image?.filename || null,
+    // Use backgroundImageUrl instead of backgroundImage (fix deprecation)
+    backgroundImageUrl: props.background_image?.filename || null,
     theme: props.theme || 'default',
   };
 
@@ -153,8 +154,9 @@ const transformTextBlockProps = props => {
     }
   }
 
+  // Typography component expects 'children' instead of 'content'
   return {
-    content: sanitizeHTML(content),
+    children: sanitizeHTML(content),
     variant: props.variant || 'body',
     alignment: props.alignment || 'left',
     theme: props.theme || 'default',
@@ -166,27 +168,42 @@ const transformTextBlockProps = props => {
  * @param {Object} props - CMS props
  * @returns {Object} Svarog-UI props
  */
-const transformButtonProps = props => ({
-  text: props.text || 'Button',
-  href: props.url || '#',
-  variant: props.variant || 'primary',
-  size: props.size || 'medium',
-  disabled: props.disabled || false,
-  theme: props.theme || 'default',
-  onClick: () => {
-    if (isDevelopment()) {
-      console.log('Button clicked:', props.text, props.url);
-    }
-    // Track button clicks for analytics
-    if (window.analytics) {
-      window.analytics.track('Button Clicked', {
-        text: props.text,
-        url: props.url,
-        variant: props.variant,
-      });
-    }
-  },
-});
+const transformButtonProps = props => {
+  // Validate button size - only 'sm', 'md', 'lg' are valid
+  const validSizes = ['sm', 'md', 'lg'];
+  const sizeMap = {
+    small: 'sm',
+    medium: 'md',
+    large: 'lg',
+    sm: 'sm',
+    md: 'md',
+    lg: 'lg',
+  };
+
+  const size = sizeMap[props.size] || 'md';
+
+  return {
+    text: props.text || 'Button',
+    href: props.url || '#',
+    variant: props.variant || 'primary',
+    size: validSizes.includes(size) ? size : 'md',
+    disabled: props.disabled || false,
+    theme: props.theme || 'default',
+    onClick: () => {
+      if (isDevelopment()) {
+        console.log('Button clicked:', props.text, props.url);
+      }
+      // Track button clicks for analytics
+      if (window.analytics) {
+        window.analytics.track('Button Clicked', {
+          text: props.text,
+          url: props.url,
+          variant: props.variant,
+        });
+      }
+    },
+  };
+};
 
 /**
  * Transforms card props
@@ -195,8 +212,8 @@ const transformButtonProps = props => ({
  */
 const transformCardProps = props => ({
   title: props.title || 'Card Title',
-  content: props.content || '',
-  image: props.image?.filename || null,
+  children: props.content || '', // Card expects 'children' not 'content'
+  imageUrl: props.image?.filename || null, // Use imageUrl instead of image
   link: props.link
     ? {
         text: props.link.text || 'Read More',
@@ -226,8 +243,8 @@ const transformImageProps = props => ({
  * @returns {Object} Svarog-UI props
  */
 const transformGridProps = props => ({
-  columns: props.columns || 12,
-  gap: props.gap || 'medium',
+  columns: parseInt(props.columns) || 12, // Ensure it's a number
+  // Skip gap property for now to see if Grid works without it
   children: (props.children || [])
     .map(child => createComponent(child))
     .filter(Boolean),
@@ -239,14 +256,19 @@ const transformGridProps = props => ({
  * @param {Object} props - CMS props
  * @returns {Object} Svarog-UI props
  */
-const transformSectionProps = props => ({
-  variant: props.variant || 'default',
-  padding: props.padding || 'medium',
-  children: (props.children || [])
-    .map(child => createComponent(child))
-    .filter(Boolean),
-  theme: props.theme || 'default',
-});
+const transformSectionProps = props => {
+  // Section only accepts 'minor' variant or undefined
+  const variant = props.variant === 'minor' ? 'minor' : undefined;
+
+  return {
+    variant,
+    padding: props.padding || 'medium',
+    children: (props.children || [])
+      .map(child => createComponent(child))
+      .filter(Boolean),
+    theme: props.theme || 'default',
+  };
+};
 
 /**
  * Transforms header props
@@ -311,47 +333,39 @@ const transformNavigationProps = props => ({
  * @returns {Object} Fallback component instance
  */
 const createFallbackComponent = (cmsComponent, error = null) => {
-  const fallbackFactory = getComponentFactory('Typography');
-
-  if (!fallbackFactory) {
-    // Create a simple DOM fallback if no Typography component available
-    return {
-      getElement: () => {
-        const div = document.createElement('div');
-        div.className = 'component-fallback';
-        div.style.cssText = `
-          padding: 1rem; 
-          border: 2px dashed #ccc; 
-          background: #f9f9f9; 
-          border-radius: 4px;
-          margin: 0.5rem 0;
-        `;
-        div.innerHTML = `
-          <p><strong>Component not available:</strong> ${cmsComponent.component}</p>
-          ${error && isDevelopment() ? `<details><summary>Error Details</summary><pre>${error.message}</pre></details>` : ''}
-        `;
-        return div;
-      },
-      update: () => {},
-      destroy: () => {},
-    };
-  }
-
-  return fallbackFactory({
-    content: `
-      <div class="component-fallback" style="
+  // Create a simple DOM-based fallback instead of using Typography
+  return {
+    getElement: () => {
+      const div = document.createElement('div');
+      div.className = 'component-fallback';
+      div.style.cssText = `
         padding: 1rem; 
         border: 2px dashed #ccc; 
-        background: #f9f9f9;
+        background: #f9f9f9; 
         border-radius: 4px;
         margin: 0.5rem 0;
-      ">
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      `;
+
+      div.innerHTML = `
         <p><strong>Component not available:</strong> ${cmsComponent.component}</p>
-        ${error && isDevelopment() ? `<details><summary>Error Details</summary><pre>${error.message}</pre></details>` : ''}
-      </div>
-    `,
-    variant: 'body',
-  });
+        ${
+          error && isDevelopment()
+            ? `
+          <details style="margin-top: 0.5rem;">
+            <summary style="cursor: pointer; font-size: 0.875rem; color: #666;">Error Details</summary>
+            <pre style="font-size: 0.75rem; color: #999; margin-top: 0.25rem; white-space: pre-wrap;">${error.message}</pre>
+          </details>
+        `
+            : ''
+        }
+      `;
+
+      return div;
+    },
+    update: () => {},
+    destroy: () => {},
+  };
 };
 
 /**

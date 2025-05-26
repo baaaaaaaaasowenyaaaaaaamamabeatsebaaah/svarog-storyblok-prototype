@@ -4,8 +4,8 @@
  * This file is loaded by Webpack and initializes the application
  */
 
-// Svarog-UI uses automatic style injection - no CSS imports needed!
-// Components inject their own styles when rendered
+// Import Svarog-UI styles first to ensure they're loaded
+import 'svarog-ui/dist/svarog-ui.css';
 
 // Import our application styles
 import './styles/main.css';

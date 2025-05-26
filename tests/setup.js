@@ -1,3 +1,4 @@
+// File: tests/setup.js
 /**
  * Vitest test setup for Svarog-UI + Storyblok integration
  * Configures testing environment with mocks and utilities
@@ -14,12 +15,11 @@ Object.defineProperty(import.meta, 'env', {
   },
 });
 
-// Mock Storyblok client - with conditional error handling
+// Mock Storyblok client
 vi.mock('storyblok-js-client', () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       get: vi.fn().mockImplementation(path => {
-        // Simulate error for non-existent stories
         if (path.includes('non-existent-story')) {
           return Promise.reject(new Error('Story not found'));
         }
@@ -53,101 +53,108 @@ vi.mock('storyblok-js-client', () => {
   };
 });
 
-// Mock Svarog-UI components
+// Create a factory for mock Svarog components
+const createMockSvarogComponent = name => {
+  return vi.fn(() => ({
+    getElement: () => {
+      const el = document.createElement('div');
+      el.className = name.toLowerCase();
+      el.textContent = name;
+      return el;
+    },
+    update: vi.fn(),
+    destroy: vi.fn(),
+  }));
+};
+
+// Mock Svarog-UI components - ALL components
 vi.mock('svarog-ui', () => ({
-  Button: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('button');
-      el.textContent = 'Button';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Typography: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('div');
-      el.textContent = 'Typography';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Card: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('div');
-      el.className = 'card';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Hero: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('section');
-      el.className = 'hero';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Grid: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('div');
-      el.className = 'grid';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Section: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('section');
-      el.className = 'section';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Image: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('img');
-      el.src = 'test.jpg';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Header: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('header');
-      el.className = 'header';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Footer: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('footer');
-      el.className = 'footer';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
-  Navigation: vi.fn(() => ({
-    getElement: () => {
-      const el = document.createElement('nav');
-      el.className = 'navigation';
-      return el;
-    },
-    update: vi.fn(),
-    destroy: vi.fn(),
-  })),
+  // Layout Components
+  Grid: createMockSvarogComponent('Grid'),
+  Section: createMockSvarogComponent('Section'),
+  Page: createMockSvarogComponent('Page'),
+
+  // Content Components
+  Hero: createMockSvarogComponent('Hero'),
+  MuchandyHero: createMockSvarogComponent('MuchandyHero'),
+  Typography: createMockSvarogComponent('Typography'),
+  Card: createMockSvarogComponent('Card'),
+  Image: createMockSvarogComponent('Image'),
+  Logo: createMockSvarogComponent('Logo'),
+
+  // Navigation Components
+  Header: createMockSvarogComponent('Header'),
+  CollapsibleHeader: createMockSvarogComponent('CollapsibleHeader'),
+  Navigation: createMockSvarogComponent('Navigation'),
+  Footer: createMockSvarogComponent('Footer'),
+  Pagination: createMockSvarogComponent('Pagination'),
+  Tabs: createMockSvarogComponent('Tabs'),
+
+  // Form Components
+  Form: createMockSvarogComponent('Form'),
+  FormGroup: createMockSvarogComponent('FormGroup'),
+  FormSection: createMockSvarogComponent('FormSection'),
+  FormActions: createMockSvarogComponent('FormActions'),
+  Input: createMockSvarogComponent('Input'),
+  Select: createMockSvarogComponent('Select'),
+  Checkbox: createMockSvarogComponent('Checkbox'),
+  Radio: createMockSvarogComponent('Radio'),
+  RadioGroup: createMockSvarogComponent('RadioGroup'),
+  ConditionSelector: createMockSvarogComponent('ConditionSelector'),
+
+  // UI Components
+  Button: createMockSvarogComponent('Button'),
+  Link: createMockSvarogComponent('Link'),
+  Rating: createMockSvarogComponent('Rating'),
+  PriceDisplay: createMockSvarogComponent('PriceDisplay'),
+  StepsIndicator: createMockSvarogComponent('StepsIndicator'),
+
+  // Blog Components
+  BlogCard: createMockSvarogComponent('BlogCard'),
+  BlogList: createMockSvarogComponent('BlogList'),
+  BlogDetail: createMockSvarogComponent('BlogDetail'),
+
+  // Product Components
+  ProductCard: createMockSvarogComponent('ProductCard'),
+
+  // Specialized Components
+  PhoneRepairForm: createMockSvarogComponent('PhoneRepairForm'),
+  UsedPhonePriceForm: createMockSvarogComponent('UsedPhonePriceForm'),
+  ContactInfo: createMockSvarogComponent('ContactInfo'),
+  StickyContactIcons: createMockSvarogComponent('StickyContactIcons'),
+  Map: createMockSvarogComponent('Map'),
+
+  // Additional exports that might be used
+  Content: createMockSvarogComponent('Content'),
+  Forms: createMockSvarogComponent('Forms'),
+  Layout: createMockSvarogComponent('Layout'),
+  Nav: createMockSvarogComponent('Nav'),
+  UI: createMockSvarogComponent('UI'),
+  Utils: createMockSvarogComponent('Utils'),
+  Head: createMockSvarogComponent('Head'),
+  PhoneRepairFormContainer: createMockSvarogComponent(
+    'PhoneRepairFormContainer'
+  ),
+  UsedPhonePriceFormContainer: createMockSvarogComponent(
+    'UsedPhonePriceFormContainer'
+  ),
+
+  // Helper functions
   switchTheme: vi.fn(),
   getCurrentTheme: vi.fn(() => 'default'),
   setThemeVariable: vi.fn(),
+  themeManager: {
+    switch: vi.fn(),
+    getCurrent: vi.fn(() => 'default'),
+    getRegistered: vi.fn(() => ['default']),
+  },
+}));
+
+// Mock DOMPurify
+vi.mock('dompurify', () => ({
+  default: {
+    sanitize: vi.fn(html => html),
+  },
 }));
 
 // Mock DOM APIs

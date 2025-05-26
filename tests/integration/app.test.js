@@ -1,3 +1,4 @@
+// File: tests/integration/app.test.js
 /**
  * Application integration tests
  * Tests the main app functionality and routing
@@ -52,7 +53,7 @@ describe('App Integration', () => {
       expect(app).toBeDefined();
       expect(typeof app.init).toBe('function');
       expect(typeof app.navigateToRoute).toBe('function');
-      expect(typeof app.changeTheme).toBe('function');
+      expect(typeof app.getStatus).toBe('function');
       expect(typeof app.destroy).toBe('function');
     });
 
@@ -69,7 +70,7 @@ describe('App Integration', () => {
     test('provides app status information', () => {
       app = createApp({
         container,
-        theme: 'cabalou',
+        theme: 'default',
       });
 
       const status = app.getStatus();
@@ -83,24 +84,13 @@ describe('App Integration', () => {
   });
 
   describe('Theme Management', () => {
-    test('changes theme and dispatches event', () => {
+    test('app uses default theme', () => {
       app = createApp({
         container,
-        theme: 'default',
       });
 
-      const eventSpy = vi.fn();
-      window.addEventListener('themeChange', eventSpy);
-
-      app.changeTheme('cabalou');
-
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          detail: { theme: 'cabalou' },
-        })
-      );
-
-      window.removeEventListener('themeChange', eventSpy);
+      const status = app.getStatus();
+      expect(status.currentTheme).toBe('default');
     });
   });
 

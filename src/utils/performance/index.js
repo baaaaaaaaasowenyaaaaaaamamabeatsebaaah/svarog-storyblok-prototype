@@ -10,11 +10,11 @@ export const createPerformanceMonitor = () => {
   const measurements = new Map();
 
   return {
-    start: (label) => {
+    start: label => {
       measurements.set(label, performance.now());
     },
 
-    end: (label) => {
+    end: label => {
       const startTime = measurements.get(label);
       if (!startTime) {
         console.warn(`No start time found for: ${label}`);
@@ -82,8 +82,8 @@ export const throttle = (func, limit) => {
  * @param {Function} operations - Function containing DOM operations
  * @returns {*} Result of operations
  */
-export const batchDOMUpdates = (operations) => {
-  return new Promise((resolve) => {
+export const batchDOMUpdates = operations => {
+  return new Promise(resolve => {
     requestAnimationFrame(() => {
       const result = operations();
       resolve(result);
@@ -105,7 +105,7 @@ export const createResourcePool = (factory, reset) => {
       return pool.length > 0 ? reset(pool.pop()) : factory();
     },
 
-    release: (object) => {
+    release: object => {
       if (pool.length < 100) {
         // Prevent unlimited growth
         pool.push(object);

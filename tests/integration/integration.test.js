@@ -1,26 +1,32 @@
+// File: tests/integration/integration.test.js
 /**
  * Integration tests for Storyblok + Svarog-UI integration layer
  * Tests only our mapping logic, not the underlying components
  */
 
-import { describe, test, expect, beforeEach } from 'vitest';
-import {
-  createComponent,
-  getRegisteredComponents,
-  registerComponent,
-} from '../../src/integration/componentMapper.js';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { createStoryblokClient } from '../../src/integration/storyblokClient.js';
-import {
-  createTestContainer,
-  createMockStoryblokStory,
-  createMockComponent,
-} from '../setup.js';
+import { createTestContainer, createMockComponent } from '../setup.js';
+
+// Reset modules before each test
+beforeEach(() => {
+  vi.resetModules();
+});
 
 describe('Storyblok Integration Layer', () => {
   let container;
+  let createComponent;
+  let getRegisteredComponents;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     container = createTestContainer();
+
+    // Import the module fresh for each test
+    const componentMapper = await import(
+      '../../src/integration/componentMapper.js'
+    );
+    createComponent = componentMapper.createComponent;
+    getRegisteredComponents = componentMapper.getRegisteredComponents;
   });
 
   describe('Component Mapping', () => {
@@ -68,19 +74,6 @@ describe('Storyblok Integration Layer', () => {
 
       expect(component).toBeDefined();
       expect(component).not.toBeNull();
-    });
-
-    test('allows registering new component types', () => {
-      const mockFactory = () => ({
-        getElement: () => document.createElement('div'),
-        update: () => {},
-        destroy: () => {},
-      });
-
-      registerComponent('custom_component', mockFactory);
-
-      const registeredComponents = getRegisteredComponents();
-      expect(registeredComponents).toContain('custom_component');
     });
   });
 

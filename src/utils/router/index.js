@@ -300,7 +300,7 @@ export class Router {
    * @param {string} from - Current path
    * @returns {boolean} Whether to continue navigation
    */
-  async runBeforeHooks(to, from) {
+  async runBeforeHooks(_to, _from) {
     for (const hook of this.beforeHooks) {
       const result = await hook(_to, _from);
       if (result === false) return false;

@@ -3,13 +3,38 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import webpack from 'webpack';
+import { config } from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables
+config();
+
 export default (env, argv) => {
   const isProduction = argv.mode === 'production';
   const isDevelopment = argv.mode === 'development';
+
+  // Define environment variables to inject
+  const envVars = {
+    'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),
+    'process.env.VITE_STORYBLOK_TOKEN': JSON.stringify(
+      process.env.VITE_STORYBLOK_TOKEN || ''
+    ),
+    'process.env.VITE_STORYBLOK_VERSION': JSON.stringify(
+      process.env.VITE_STORYBLOK_VERSION || 'draft'
+    ),
+    'process.env.VITE_STORYBLOK_SPACE_ID': JSON.stringify(
+      process.env.VITE_STORYBLOK_SPACE_ID || ''
+    ),
+    'process.env.VITE_STORYBLOK_REGION': JSON.stringify(
+      process.env.VITE_STORYBLOK_REGION || 'eu'
+    ),
+    'process.env.VITE_BASE_URL': JSON.stringify(
+      process.env.VITE_BASE_URL || 'http://localhost:3000'
+    ),
+  };
 
   return {
     entry: './src/index.js',
@@ -45,6 +70,7 @@ export default (env, argv) => {
     },
 
     plugins: [
+      new webpack.DefinePlugin(envVars),
       new HtmlWebpackPlugin({
         template: './src/index.html',
         inject: 'body',
@@ -70,8 +96,8 @@ export default (env, argv) => {
       hot: true,
       historyApiFallback: true,
       open: true,
-      // Enable HTTPS for Storyblok live preview
-      https: isDevelopment,
+      // Use new server option instead of deprecated https
+      server: isDevelopment ? 'https' : 'http',
       // Allow connections from Storyblok
       allowedHosts: 'all',
       headers: {

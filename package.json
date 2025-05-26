@@ -1,6 +1,6 @@
 {
   "name": "svarog-storyblok-integration",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "engines": {
     "node": ">=18.0.0",
@@ -38,7 +38,7 @@
     "express-rate-limit": "^7.5.0",
     "morgan": "^1.10.0",
     "storyblok-js-client": "^6.7.0",
-    "svarog-ui": "^3.0.1"
+    "svarog-ui": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -71,14 +71,15 @@
     "integration",
     "example",
     "demo",
-    "live-preview"
+    "live-preview",
+    "component-showcase"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/your-org/svarog-storyblok-integration.git"
   },
   "license": "MIT",
-  "description": "Example integration between Svarog-UI component library and Storyblok CMS with live preview functionality",
+  "description": "Complete component showcase integration between Svarog-UI and Storyblok CMS",
   "author": "Your Name <your.email@example.com>",
   "homepage": "https://github.com/your-org/svarog-storyblok-integration#readme",
   "bugs": {

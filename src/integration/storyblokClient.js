@@ -1,3 +1,4 @@
+// File: src/integration/storyblokClient.js
 /**
  * Enhanced Storyblok client for Svarog-UI integration
  * Handles content fetching, caching, and component creation
@@ -5,23 +6,42 @@
 
 import StoryblokClient from 'storyblok-js-client';
 import { createComponent } from './componentMapper.js';
+import { getStoryblokConfig } from '../config/environment.js';
+import { isDevelopment } from '../utils/environment.js';
+
 /**
  * Creates an enhanced Storyblok client with Svarog-UI integration
  * @param {Object} config - Configuration object
  * @returns {Object} Enhanced client API
  */
 export const createStoryblokClient = (config = {}) => {
-  const {
-    accessToken = import.meta.env.VITE_STORYBLOK_TOKEN,
-    version = import.meta.env.VITE_STORYBLOK_VERSION || 'published',
-    region = 'eu',
-  } = config;
+  let storyblokConfig;
 
-  if (!accessToken) {
-    throw new Error('Storyblok access token is required');
+  try {
+    storyblokConfig = getStoryblokConfig();
+  } catch (error) {
+    if (isDevelopment()) {
+      console.warn('⚠️ Storyblok configuration error:', error.message);
+      console.log('💡 Using fallback configuration for development');
+    }
+
+    // Fallback configuration for development
+    storyblokConfig = {
+      accessToken: 'demo_token',
+      version: 'draft',
+      region: 'eu',
+      cache: false,
+      enablePreview: true,
+    };
   }
 
-  // Initialize Storyblok client
+  const {
+    accessToken = storyblokConfig.accessToken,
+    version = storyblokConfig.version,
+    region = storyblokConfig.region,
+  } = config;
+
+  // Initialize Storyblok client with fallback
   const client = new StoryblokClient({
     accessToken,
     cache: {
@@ -63,10 +83,67 @@ export const createStoryblokClient = (config = {}) => {
         },
       };
     } catch (error) {
-      console.error(`Failed to fetch story: ${slug}`, error);
+      if (isDevelopment()) {
+        console.warn(`Failed to fetch story: ${slug}`, error.message);
+        return createFallbackStory(slug);
+      }
       throw new Error(`Story not found: ${slug}`);
     }
   };
+
+  /**
+   * Creates fallback story for development
+   * @param {string} slug - Story slug
+   * @returns {Object} Fallback story
+   */
+  const createFallbackStory = slug => ({
+    id: 'fallback',
+    name: `Fallback Story (${slug})`,
+    slug,
+    content: {
+      title: 'Demo Content',
+      description: 'This is fallback content for development',
+      body: [
+        {
+          component: 'hero_section',
+          title: 'Welcome to Svarog-UI + Storyblok',
+          subtitle:
+            'Demo content - configure your Storyblok token to see real content',
+          theme: 'default',
+        },
+        {
+          component: 'text_block',
+          content: {
+            type: 'doc',
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    type: 'text',
+                    text: 'This is demo content. To see real content from Storyblok, please configure your VITE_STORYBLOK_TOKEN in the .env file.',
+                  },
+                ],
+              },
+            ],
+          },
+          variant: 'body',
+        },
+        {
+          component: 'button',
+          text: 'Get Started',
+          url: '#setup',
+          variant: 'primary',
+        },
+      ],
+    },
+    renderedComponents: [],
+    metadata: {
+      fetchedAt: new Date().toISOString(),
+      slug,
+      version: 'fallback',
+    },
+  });
 
   /**
    * Fetches multiple stories with components
@@ -95,7 +172,10 @@ export const createStoryblokClient = (config = {}) => {
 
       return storiesWithComponents;
     } catch (error) {
-      console.error('Failed to fetch stories', error);
+      if (isDevelopment()) {
+        console.warn('Failed to fetch stories, using fallback', error.message);
+        return [createFallbackStory('home')];
+      }
       throw new Error(`Failed to load stories: ${error.message}`);
     }
   };

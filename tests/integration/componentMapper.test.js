@@ -1,20 +1,28 @@
+// File: tests/integration/componentMapper.test.js
 /**
  * Integration tests for Storyblok to Svarog-UI component mapping
  * Tests the core integration functionality
  */
 
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import {
-  createComponent,
-  getRegisteredComponents,
-} from '@/integration/componentMapper.js';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { createTestContainer, createMockComponent } from '../setup.js';
 
-describe('Component Mapper Integration', () => {
-  let container;
+// Reset modules before each test to ensure clean state
+beforeEach(() => {
+  vi.resetModules();
+});
 
-  beforeEach(() => {
-    container = createTestContainer();
+describe('Component Mapper Integration', () => {
+  let createComponent;
+  let getRegisteredComponents;
+
+  beforeEach(async () => {
+    createTestContainer();
+
+    // Import the module fresh for each test
+    const componentMapper = await import('@/integration/componentMapper.js');
+    createComponent = componentMapper.createComponent;
+    getRegisteredComponents = componentMapper.getRegisteredComponents;
   });
 
   describe('Component Creation', () => {
@@ -102,19 +110,6 @@ describe('Component Mapper Integration', () => {
     });
 
     test('creates fallback component when factory throws error', () => {
-      // Mock a component factory that throws an error
-      vi.doMock('@/integration/componentMapper.js', async () => {
-        const actual = await vi.importActual(
-          '@/integration/componentMapper.js'
-        );
-        return {
-          ...actual,
-          createComponent: vi.fn(() => {
-            throw new Error('Component creation failed');
-          }),
-        };
-      });
-
       const cmsData = createMockComponent('hero_section');
       const component = createComponent(cmsData);
 

@@ -30,7 +30,7 @@ export const binarySearch = (sortedArray, target) => {
  * @param {Function} fn - Function to memoize
  * @returns {Function} Memoized function
  */
-export const memoize = (fn) => {
+export const memoize = fn => {
   const cache = new Map();
   return (...args) => {
     const key = JSON.stringify(args);
@@ -46,7 +46,7 @@ export const memoize = (fn) => {
  * @param {Array} array - Array to deduplicate
  * @returns {Array} Deduplicated array
  */
-export const deduplicate = (array) => [...new Set(array)];
+export const deduplicate = array => [...new Set(array)];
 
 /**
  * Fast object property lookup using Map - O(1)
@@ -55,7 +55,7 @@ export const deduplicate = (array) => [...new Set(array)];
  * @returns {Map} Map with key -> object mapping
  */
 export const createLookupMap = (objects, key) => {
-  return new Map(objects.map((obj) => [obj[key], obj]));
+  return new Map(objects.map(obj => [obj[key], obj]));
 };
 
 /**
