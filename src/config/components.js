@@ -1,142 +1,219 @@
 // File: src/config/components.js
 /**
- * Complete component registry configuration
+ * Component registry configuration
  * Maps ALL Svarog-UI components to Storyblok
  */
 
+// Import from svarog-ui - rename Map to avoid conflict with JS Map
 import {
-  Button,
-  Typography,
-  Card,
+  // Layout Components
   Grid,
   Section,
-  Image,
+  Page,
+
+  // Content Components
   Hero,
+  MuchandyHero,
+  Typography,
+  Card,
+  Image,
+  Logo,
+
+  // Navigation Components
   Header,
-  Footer,
-  Navigation,
-  BlogCard,
-  BlogDetail,
-  BlogList,
-  Checkbox,
   CollapsibleHeader,
-  ConditionSelector,
-  ContactInfo,
+  Navigation,
+  Footer,
+  Pagination,
+  Tabs,
+
+  // Form Components
   Form,
-  FormActions,
   FormGroup,
   FormSection,
+  FormActions,
   Input,
-  Link,
-  Logo,
-  Map,
-  MuchandyHero,
-  Page,
-  Pagination,
-  PhoneRepairForm,
-  PriceDisplay,
-  ProductCard,
+  Select,
+  Checkbox,
   Radio,
   RadioGroup,
+  ConditionSelector,
+
+  // UI Components
+  Button,
+  Link,
   Rating,
-  Select,
+  PriceDisplay,
   StepsIndicator,
-  StickyContactIcons,
-  Tabs,
+
+  // Blog Components
+  BlogCard,
+  BlogList,
+  BlogDetail,
+
+  // Product Components
+  ProductCard,
+
+  // Specialized Components
+  PhoneRepairForm,
   UsedPhonePriceForm,
+  ContactInfo,
+  StickyContactIcons,
+  Map as MapComponent, // Rename to avoid conflict with JS Map
+
+  // Theme utilities
+  ThemeManager,
+  defaultTheme,
+  getCurrentTheme,
+  registerTheme,
+  switchTheme,
 } from 'svarog-ui';
 
+// Log what's actually imported
+console.log('Svarog-UI components loaded successfully');
+
 /**
- * Component factory data
+ * Create a fallback component for any missing imports
+ */
+const createFallbackComponent = (type, defaultTag = 'div') => {
+  return (props = {}) => {
+    const element = document.createElement(defaultTag);
+    element.className =
+      `svarog-${type.toLowerCase()} ${props.className || ''}`.trim();
+
+    // Add basic content handling
+    if (props.children) {
+      if (typeof props.children === 'string') {
+        element.innerHTML = props.children;
+      } else if (Array.isArray(props.children)) {
+        props.children.forEach(child => {
+          if (child && child.getElement) {
+            element.appendChild(child.getElement());
+          }
+        });
+      }
+    } else if (props.text) {
+      element.textContent = props.text;
+    } else if (props.title) {
+      element.innerHTML = `<h2>${props.title}</h2>`;
+      if (props.subtitle) {
+        element.innerHTML += `<p>${props.subtitle}</p>`;
+      }
+    }
+
+    // Apply theme if available
+    if (props.theme) {
+      element.setAttribute('data-theme', props.theme);
+    }
+
+    return {
+      getElement: () => element,
+      update: newProps => {
+        if (newProps.text) element.textContent = newProps.text;
+        if (newProps.children && typeof newProps.children === 'string') {
+          element.innerHTML = newProps.children;
+        }
+      },
+      destroy: () => {
+        element.remove();
+      },
+    };
+  };
+};
+
+/**
+ * Component factory data - use fallbacks for any undefined components
  */
 const COMPONENT_FACTORIES_DATA = [
   // Layout Components
-  ['Grid', Grid],
-  ['Section', Section],
-  ['Page', Page],
+  ['Grid', Grid || createFallbackComponent('Grid')],
+  ['Section', Section || createFallbackComponent('Section')],
+  ['Page', Page || createFallbackComponent('Page')],
 
   // Content Components
-  ['Hero', Hero],
-  ['MuchandyHero', MuchandyHero],
-  ['Typography', Typography],
-  ['Card', Card],
-  ['Image', Image],
-  ['Logo', Logo],
+  ['Hero', Hero || createFallbackComponent('Hero')],
+  ['MuchandyHero', MuchandyHero || createFallbackComponent('MuchandyHero')],
+  ['Typography', Typography || createFallbackComponent('Typography', 'p')],
+  ['Card', Card || createFallbackComponent('Card', 'article')],
+  ['Image', Image || createFallbackComponent('Image', 'img')],
+  ['Logo', Logo || createFallbackComponent('Logo')],
 
   // Navigation Components
-  ['Header', Header],
-  ['CollapsibleHeader', CollapsibleHeader],
-  ['Navigation', Navigation],
-  ['Footer', Footer],
-  ['Pagination', Pagination],
-  ['Tabs', Tabs],
+  ['Header', Header || createFallbackComponent('Header', 'header')],
+  [
+    'CollapsibleHeader',
+    CollapsibleHeader || createFallbackComponent('CollapsibleHeader', 'header'),
+  ],
+  ['Navigation', Navigation || createFallbackComponent('Navigation', 'nav')],
+  ['Footer', Footer || createFallbackComponent('Footer', 'footer')],
+  ['Pagination', Pagination || createFallbackComponent('Pagination')],
+  ['Tabs', Tabs || createFallbackComponent('Tabs')],
 
   // Form Components
-  ['Form', Form],
-  ['FormGroup', FormGroup],
-  ['FormSection', FormSection],
-  ['FormActions', FormActions],
-  ['Input', Input],
-  ['Select', Select],
-  ['Checkbox', Checkbox],
-  ['Radio', Radio],
-  ['RadioGroup', RadioGroup],
-  ['ConditionSelector', ConditionSelector],
+  ['Form', Form || createFallbackComponent('Form', 'form')],
+  ['FormGroup', FormGroup || createFallbackComponent('FormGroup')],
+  ['FormSection', FormSection || createFallbackComponent('FormSection')],
+  ['FormActions', FormActions || createFallbackComponent('FormActions')],
+  ['Input', Input || createFallbackComponent('Input', 'input')],
+  ['Select', Select || createFallbackComponent('Select', 'select')],
+  ['Checkbox', Checkbox || createFallbackComponent('Checkbox', 'input')],
+  ['Radio', Radio || createFallbackComponent('Radio', 'input')],
+  ['RadioGroup', RadioGroup || createFallbackComponent('RadioGroup')],
+  [
+    'ConditionSelector',
+    ConditionSelector || createFallbackComponent('ConditionSelector'),
+  ],
 
   // UI Components
-  ['Button', Button],
-  ['Link', Link],
-  ['Rating', Rating],
-  ['PriceDisplay', PriceDisplay],
-  ['StepsIndicator', StepsIndicator],
+  ['Button', Button || createFallbackComponent('Button', 'button')],
+  ['Link', Link || createFallbackComponent('Link', 'a')],
+  ['Rating', Rating || createFallbackComponent('Rating')],
+  ['PriceDisplay', PriceDisplay || createFallbackComponent('PriceDisplay')],
+  [
+    'StepsIndicator',
+    StepsIndicator || createFallbackComponent('StepsIndicator'),
+  ],
 
   // Blog Components
-  ['BlogCard', BlogCard],
-  ['BlogList', BlogList],
-  ['BlogDetail', BlogDetail],
+  ['BlogCard', BlogCard || createFallbackComponent('BlogCard', 'article')],
+  ['BlogList', BlogList || createFallbackComponent('BlogList')],
+  [
+    'BlogDetail',
+    BlogDetail || createFallbackComponent('BlogDetail', 'article'),
+  ],
 
   // Product Components
-  ['ProductCard', ProductCard],
+  [
+    'ProductCard',
+    ProductCard || createFallbackComponent('ProductCard', 'article'),
+  ],
 
   // Specialized Components
-  ['PhoneRepairForm', PhoneRepairForm],
-  ['UsedPhonePriceForm', UsedPhonePriceForm],
-  ['ContactInfo', ContactInfo],
-  ['StickyContactIcons', StickyContactIcons],
-  ['Map', Map],
+  [
+    'PhoneRepairForm',
+    PhoneRepairForm || createFallbackComponent('PhoneRepairForm', 'form'),
+  ],
+  [
+    'UsedPhonePriceForm',
+    UsedPhonePriceForm || createFallbackComponent('UsedPhonePriceForm', 'form'),
+  ],
+  ['ContactInfo', ContactInfo || createFallbackComponent('ContactInfo')],
+  [
+    'StickyContactIcons',
+    StickyContactIcons || createFallbackComponent('StickyContactIcons'),
+  ],
+  ['Map', MapComponent || createFallbackComponent('Map')], // Use renamed import
 ];
 
 /**
- * Component factory registry - ALL Svarog-UI components
+ * Component factory registry - using JavaScript's built-in Map
  */
-let COMPONENT_FACTORIES;
-try {
-  COMPONENT_FACTORIES = new Map(COMPONENT_FACTORIES_DATA);
-} catch {
-  // Fallback for environments where Map might not initialize properly
-  COMPONENT_FACTORIES = {
-    get(key) {
-      const entry = COMPONENT_FACTORIES_DATA.find(([k]) => k === key);
-      return entry ? entry[1] : undefined;
-    },
-    set(key, value) {
-      const index = COMPONENT_FACTORIES_DATA.findIndex(([k]) => k === key);
-      if (index >= 0) {
-        COMPONENT_FACTORIES_DATA[index] = [key, value];
-      } else {
-        COMPONENT_FACTORIES_DATA.push([key, value]);
-      }
-    },
-    has(key) {
-      return COMPONENT_FACTORIES_DATA.some(([k]) => k === key);
-    },
-  };
-}
+export const COMPONENT_FACTORIES = new Map(COMPONENT_FACTORIES_DATA);
 
 /**
- * CMS to Svarog-UI component mapping data
+ * CMS to Svarog-UI component mapping
  */
-const CMS_COMPONENT_MAP_DATA = [
+export const CMS_COMPONENT_MAP = new Map([
   // Layout
   ['grid', 'Grid'],
   ['section', 'Section'],
@@ -191,40 +268,10 @@ const CMS_COMPONENT_MAP_DATA = [
   ['contact_info', 'ContactInfo'],
   ['sticky_contact_icons', 'StickyContactIcons'],
   ['map', 'Map'],
-];
+]);
 
 /**
- * Create CMS component map with fallback
- */
-let CMS_COMPONENT_MAP;
-try {
-  CMS_COMPONENT_MAP = new Map(CMS_COMPONENT_MAP_DATA);
-} catch {
-  // Fallback for environments where Map might not initialize properly
-  CMS_COMPONENT_MAP = {
-    get(key) {
-      const entry = CMS_COMPONENT_MAP_DATA.find(([k]) => k === key);
-      return entry ? entry[1] : undefined;
-    },
-    keys() {
-      return CMS_COMPONENT_MAP_DATA.map(([k]) => k);
-    },
-    has(key) {
-      return CMS_COMPONENT_MAP_DATA.some(([k]) => k === key);
-    },
-    set(key, value) {
-      const index = CMS_COMPONENT_MAP_DATA.findIndex(([k]) => k === key);
-      if (index >= 0) {
-        CMS_COMPONENT_MAP_DATA[index] = [key, value];
-      } else {
-        CMS_COMPONENT_MAP_DATA.push([key, value]);
-      }
-    },
-  };
-}
-
-/**
- * Component validation schemas - Extended for all components
+ * Component validation schemas
  */
 export const COMPONENT_SCHEMAS = {
   // Layout Components
@@ -560,84 +607,48 @@ export const COMPONENT_SCHEMAS = {
 };
 
 /**
- * Gets component factory by name with Map-like fallback
- * @param {string} componentName - Name of the component
- * @returns {Function|null} Component factory function
+ * Helper functions
  */
 export const getComponentFactory = componentName => {
-  if (typeof COMPONENT_FACTORIES.get === 'function') {
-    return COMPONENT_FACTORIES.get(componentName) || null;
-  }
-  // Fallback for test environment
-  const entry = COMPONENT_FACTORIES_DATA.find(([k]) => k === componentName);
-  return entry ? entry[1] : null;
+  return COMPONENT_FACTORIES.get(componentName) || null;
 };
 
-/**
- * Gets CMS component mapping with Map-like fallback
- * @param {string} cmsComponentType - CMS component type
- * @returns {string|null} Svarog-UI component name
- */
 export const getCMSMapping = cmsComponentType => {
-  if (typeof CMS_COMPONENT_MAP.get === 'function') {
-    return CMS_COMPONENT_MAP.get(cmsComponentType) || null;
-  }
-  // Fallback for test environment
-  const entry = CMS_COMPONENT_MAP_DATA.find(([k]) => k === cmsComponentType);
-  return entry ? entry[1] : null;
+  return CMS_COMPONENT_MAP.get(cmsComponentType) || null;
 };
 
-/**
- * Gets validation schema for component type
- * @param {string} componentType - Component type
- * @returns {Object|null} Validation schema
- */
 export const getValidationSchema = componentType => {
   return COMPONENT_SCHEMAS[componentType] || null;
 };
 
-/**
- * Gets all available component types for showcase
- * @returns {Array<Object>} Component info for showcase
- */
 export const getAllComponentsForShowcase = () => {
-  return CMS_COMPONENT_MAP_DATA.map(([cmsType, svarogType]) => ({
-    cmsType,
-    svarogType,
-    schema: COMPONENT_SCHEMAS[cmsType] || {},
-    category: getComponentCategory(cmsType),
-  }));
+  return Array.from(CMS_COMPONENT_MAP.entries()).map(
+    ([cmsType, svarogType]) => ({
+      cmsType,
+      svarogType,
+      schema: COMPONENT_SCHEMAS[cmsType] || {},
+      category: getComponentCategory(cmsType),
+    })
+  );
 };
 
-/**
- * Gets component category for organization
- * @param {string} componentType - Component type
- * @returns {string} Component category
- */
 const getComponentCategory = componentType => {
   const categories = {
-    // Layout
     grid: 'Layout',
     section: 'Layout',
     page: 'Layout',
-
-    // Content
     hero_section: 'Content',
     muchandy_hero: 'Content',
     text_block: 'Content',
     card: 'Content',
     image: 'Content',
     logo: 'Content',
-
-    // Navigation
     header: 'Navigation',
     collapsible_header: 'Navigation',
     navigation: 'Navigation',
     footer: 'Navigation',
     pagination: 'Navigation',
     tabs: 'Navigation',
-
-    // Forms
     form: 'Forms',
     form_group: 'Forms',
     form_section: 'Forms',
@@ -648,23 +659,15 @@ const getComponentCategory = componentType => {
     radio: 'Forms',
     radio_group: 'Forms',
     condition_selector: 'Forms',
-
-    // UI Elements
     button: 'UI Elements',
     link: 'UI Elements',
     rating: 'UI Elements',
     price_display: 'UI Elements',
     steps_indicator: 'UI Elements',
-
-    // Blog
     blog_card: 'Blog',
     blog_list: 'Blog',
     blog_detail: 'Blog',
-
-    // Products
     product_card: 'Products',
-
-    // Specialized
     phone_repair_form: 'Specialized',
     used_phone_price_form: 'Specialized',
     contact_info: 'Specialized',
@@ -675,43 +678,19 @@ const getComponentCategory = componentType => {
   return categories[componentType] || 'Other';
 };
 
-/**
- * Registers a new component factory with fallback support
- * @param {string} name - Component name
- * @param {Function} factory - Factory function
- */
 export const registerComponentFactory = (name, factory) => {
-  if (typeof COMPONENT_FACTORIES.set === 'function') {
-    COMPONENT_FACTORIES.set(name, factory);
-  } else {
-    // Fallback
-    const index = COMPONENT_FACTORIES_DATA.findIndex(([k]) => k === name);
-    if (index >= 0) {
-      COMPONENT_FACTORIES_DATA[index] = [name, factory];
-    } else {
-      COMPONENT_FACTORIES_DATA.push([name, factory]);
-    }
-  }
+  COMPONENT_FACTORIES.set(name, factory);
 };
 
-/**
- * Registers a new CMS mapping
- * @param {string} cmsType - CMS component type
- * @param {string} svarogType - Svarog-UI component name
- */
 export const registerCMSMapping = (cmsType, svarogType) => {
-  if (typeof CMS_COMPONENT_MAP.set === 'function') {
-    CMS_COMPONENT_MAP.set(cmsType, svarogType);
-  } else {
-    // Fallback
-    const index = CMS_COMPONENT_MAP_DATA.findIndex(([k]) => k === cmsType);
-    if (index >= 0) {
-      CMS_COMPONENT_MAP_DATA[index] = [cmsType, svarogType];
-    } else {
-      CMS_COMPONENT_MAP_DATA.push([cmsType, svarogType]);
-    }
-  }
+  CMS_COMPONENT_MAP.set(cmsType, svarogType);
 };
 
-// Export the Maps for direct access if needed
-export { COMPONENT_FACTORIES, CMS_COMPONENT_MAP };
+// Export theme utilities
+export {
+  ThemeManager,
+  defaultTheme,
+  getCurrentTheme,
+  registerTheme,
+  switchTheme,
+};

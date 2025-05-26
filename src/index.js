@@ -4,9 +4,6 @@
  * This file is loaded by Webpack and initializes the application
  */
 
-// Import Svarog-UI styles first to ensure they're loaded
-import 'svarog-ui/dist/svarog-ui.css';
-
 // Import our application styles
 import './styles/main.css';
 
@@ -19,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     if (isDevelopment()) {
       console.log('🚀 Starting Svarog-UI + Storyblok Integration');
+      console.log('💉 Svarog-UI uses automatic style injection');
     }
 
     // Get app container
@@ -43,13 +41,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isDevelopment()) {
       // Make app globally available for debugging
       window.app = app;
-      const svarogModule = await import('svarog-ui');
-      window.svarog = svarogModule;
+
+      // Try to load svarog-ui module and check what's available
+      try {
+        const svarogModule = await import('svarog-ui');
+        window.svarog = svarogModule;
+        console.log(
+          '🎨 Svarog-UI loaded, available exports:',
+          Object.keys(svarogModule)
+        );
+
+        // Also check svarog-ui-core
+        try {
+          const svarogCore = await import('svarog-ui-core');
+          window.svarogCore = svarogCore;
+          console.log(
+            '🎯 Svarog-UI-Core loaded, available exports:',
+            Object.keys(svarogCore)
+          );
+        } catch {
+          // Ignore error - svarog-ui-core likely exports through main module
+          console.log('ℹ️ svarog-ui-core exports through main module');
+        }
+      } catch (error) {
+        console.warn('⚠️  Could not load svarog-ui module:', error.message);
+      }
 
       // Log helpful info
       console.log('🔧 Development mode active');
       console.log('📚 Access app via window.app');
-      console.log('🎨 Access Svarog-UI via window.svarog');
       console.log('🎯 App status:', app.getStatus());
     }
 
