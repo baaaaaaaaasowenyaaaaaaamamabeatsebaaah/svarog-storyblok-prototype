@@ -4,29 +4,19 @@
  * Tests only our mapping logic, not the underlying components
  */
 
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { createStoryblokClient } from '../../src/integration/storyblokClient.js';
 import { createTestContainer, createMockComponent } from '../setup.js';
-
-// Reset modules before each test
-beforeEach(() => {
-  vi.resetModules();
-});
+import {
+  createComponent,
+  getRegisteredComponents,
+} from '../../src/integration/componentMapper.js';
 
 describe('Storyblok Integration Layer', () => {
   let container;
-  let createComponent;
-  let getRegisteredComponents;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     container = createTestContainer();
-
-    // Import the module fresh for each test
-    const componentMapper = await import(
-      '../../src/integration/componentMapper.js'
-    );
-    createComponent = componentMapper.createComponent;
-    getRegisteredComponents = componentMapper.getRegisteredComponents;
   });
 
   describe('Component Mapping', () => {

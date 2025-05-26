@@ -4,25 +4,16 @@
  * Tests the core integration functionality
  */
 
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { createTestContainer, createMockComponent } from '../setup.js';
-
-// Reset modules before each test to ensure clean state
-beforeEach(() => {
-  vi.resetModules();
-});
+import {
+  createComponent,
+  getRegisteredComponents,
+} from '../../src/integration/componentMapper.js';
 
 describe('Component Mapper Integration', () => {
-  let createComponent;
-  let getRegisteredComponents;
-
-  beforeEach(async () => {
+  beforeEach(() => {
     createTestContainer();
-
-    // Import the module fresh for each test
-    const componentMapper = await import('@/integration/componentMapper.js');
-    createComponent = componentMapper.createComponent;
-    getRegisteredComponents = componentMapper.getRegisteredComponents;
   });
 
   describe('Component Creation', () => {
