@@ -10,6 +10,7 @@ import './styles/main.css';
 // Import our application
 import { createApp } from './app.js';
 import { isDevelopment } from './utils/environment.js';
+import { initializeThemeSystem } from './utils/theme/themeInitialization.js';
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
@@ -18,6 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log('🚀 Starting Svarog-UI + Storyblok Integration');
       console.log('💉 Svarog-UI uses automatic style injection');
     }
+
+    // Initialize theme system first
+    initializeThemeSystem();
 
     // Get app container
     const container = document.getElementById('app');
