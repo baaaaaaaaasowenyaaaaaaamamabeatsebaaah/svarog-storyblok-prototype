@@ -1,4 +1,5 @@
-// File: src/index.js
+// src/index.js
+
 /**
  * Main entry point for Svarog-UI + Storyblok integration
  * This file is loaded by Webpack and initializes the application
@@ -10,18 +11,17 @@ import './styles/main.css';
 // Import our application
 import { createApp } from './app.js';
 import { isDevelopment } from './utils/environment.js';
-import { initializeThemeSystem } from './utils/theme/themeInitialization.js';
+import { initializeTheme } from './integration/themeManager.js';
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     if (isDevelopment()) {
       console.log('🚀 Starting Svarog-UI + Storyblok Integration');
-      console.log('💉 Svarog-UI uses automatic style injection');
     }
 
     // Initialize theme system first
-    initializeThemeSystem();
+    initializeTheme();
 
     // Get app container
     const container = document.getElementById('app');
@@ -29,13 +29,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       throw new Error('App container not found');
     }
 
-    // Determine environment settings
-    const savedTheme = localStorage.getItem('svarog-theme');
-
     // Create and initialize app
     const app = createApp({
       container,
-      theme: savedTheme || 'default',
       enableLivePreview: isDevelopment(),
     });
 
@@ -45,31 +41,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isDevelopment()) {
       // Make app globally available for debugging
       window.app = app;
-
-      // Try to load svarog-ui module and check what's available
-      try {
-        const svarogModule = await import('svarog-ui');
-        window.svarog = svarogModule;
-        console.log(
-          '🎨 Svarog-UI loaded, available exports:',
-          Object.keys(svarogModule)
-        );
-
-        // Also check svarog-ui-core
-        try {
-          const svarogCore = await import('svarog-ui-core');
-          window.svarogCore = svarogCore;
-          console.log(
-            '🎯 Svarog-UI-Core loaded, available exports:',
-            Object.keys(svarogCore)
-          );
-        } catch {
-          // Ignore error - svarog-ui-core likely exports through main module
-          console.log('ℹ️ svarog-ui-core exports through main module');
-        }
-      } catch (error) {
-        console.warn('⚠️  Could not load svarog-ui module:', error.message);
-      }
 
       // Log helpful info
       console.log('🔧 Development mode active');

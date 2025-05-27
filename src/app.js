@@ -1,4 +1,5 @@
-// File: src/app.js
+// src/app.js
+
 /**
  * Component showcase application with Storyblok integration
  * Loads and displays ALL components from Storyblok CMS
@@ -31,7 +32,6 @@ export const createApp = (config = {}) => {
 
   if (isDevelopment()) {
     console.log('🚀 Initializing Svarog-UI Component Showcase');
-    console.log('🎨 Theme: default');
     console.log('📡 Loading content from Storyblok...');
   }
 
