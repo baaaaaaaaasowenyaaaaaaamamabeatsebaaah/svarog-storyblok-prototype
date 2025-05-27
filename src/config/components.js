@@ -1,76 +1,61 @@
-// File: src/config/components.js
+// src/config/components.js
+
 /**
  * Component registry configuration
- * Maps ALL Svarog-UI components to Storyblok
+ * Smart loader that imports all components from svarog-ui-core
  */
 
-// Import from svarog-ui - rename Map to avoid conflict with JS Map
-import {
-  // Layout Components
-  Grid,
-  Section,
-  Page,
+import * as SvarogUICore from 'svarog-ui-core';
+import { defaultTheme } from 'svarog-ui';
 
-  // Content Components
-  Hero,
-  MuchandyHero,
-  Typography,
-  Card,
-  Image,
-  Logo,
+// Log what's available in the core package
+console.log(
+  'Available exports from svarog-ui-core:',
+  Object.keys(SvarogUICore)
+);
 
-  // Navigation Components
-  Header,
-  CollapsibleHeader,
-  Navigation,
-  Footer,
-  Pagination,
-  Tabs,
+// Extract all component-related exports (excluding utilities)
+const utilityExports = [
+  'ThemeManager',
+  'appendChildren',
+  'batchDomUpdates',
+  'cleanupEventListeners',
+  'createBaseComponent',
+  'createComponent',
+  'createElement',
+  'createStyleInjector',
+  'css',
+  'debounce',
+  'defaultTheme',
+  'getCurrentTheme',
+  'injectStyles',
+  'measurePerformance',
+  'memoize',
+  'rafThrottle',
+  'registerTheme',
+  'removeStyles',
+  'runWhenIdle',
+  'switchTheme',
+  'throttle',
+  'validateInput',
+  'validateProps',
+  'validateRequiredProps',
+  'withBehavior',
+  'withEventDelegation',
+  'withThemeAwareness',
+  'PerformanceBenchmark',
+];
 
-  // Form Components
-  Form,
-  FormGroup,
-  FormSection,
-  FormActions,
-  Input,
-  Select,
-  Checkbox,
-  Radio,
-  RadioGroup,
-  ConditionSelector,
+// Get all component names by filtering out utilities
+const componentNames = Object.keys(SvarogUICore).filter(
+  key => !utilityExports.includes(key)
+);
 
-  // UI Components
-  Button,
-  Link,
-  Rating,
-  PriceDisplay,
-  StepsIndicator,
+console.log('Detected components:', componentNames);
 
-  // Blog Components
-  BlogCard,
-  BlogList,
-  BlogDetail,
-
-  // Product Components
-  ProductCard,
-
-  // Specialized Components
-  PhoneRepairForm,
-  UsedPhonePriceForm,
-  ContactInfo,
-  StickyContactIcons,
-  Map as MapComponent, // Rename to avoid conflict with JS Map
-
-  // Theme utilities
-  ThemeManager,
-  defaultTheme,
-  getCurrentTheme,
-  registerTheme,
-  switchTheme,
-} from 'svarog-ui';
-
-// Log what's actually imported
-console.log('Svarog-UI components loaded successfully');
+// Extract theme utilities
+const { ThemeManager, getCurrentTheme, registerTheme, switchTheme } =
+  SvarogUICore;
 
 /**
  * Create a fallback component for any missing imports
@@ -122,96 +107,67 @@ const createFallbackComponent = (type, defaultTag = 'div') => {
 };
 
 /**
- * Component factory data - use fallbacks for any undefined components
+ * Dynamically build component factories based on available exports
  */
-const COMPONENT_FACTORIES_DATA = [
-  // Layout Components
-  ['Grid', Grid || createFallbackComponent('Grid')],
-  ['Section', Section || createFallbackComponent('Section')],
-  ['Page', Page || createFallbackComponent('Page')],
+const COMPONENT_FACTORIES_DATA = [];
 
-  // Content Components
-  ['Hero', Hero || createFallbackComponent('Hero')],
-  ['MuchandyHero', MuchandyHero || createFallbackComponent('MuchandyHero')],
-  ['Typography', Typography || createFallbackComponent('Typography', 'p')],
-  ['Card', Card || createFallbackComponent('Card', 'article')],
-  ['Image', Image || createFallbackComponent('Image', 'img')],
-  ['Logo', Logo || createFallbackComponent('Logo')],
+// Add all detected components
+componentNames.forEach(componentName => {
+  const component = SvarogUICore[componentName];
+  if (component && typeof component === 'function') {
+    COMPONENT_FACTORIES_DATA.push([componentName, component]);
+  }
+});
 
-  // Navigation Components
-  ['Header', Header || createFallbackComponent('Header', 'header')],
-  [
-    'CollapsibleHeader',
-    CollapsibleHeader || createFallbackComponent('CollapsibleHeader', 'header'),
-  ],
-  ['Navigation', Navigation || createFallbackComponent('Navigation', 'nav')],
-  ['Footer', Footer || createFallbackComponent('Footer', 'footer')],
-  ['Pagination', Pagination || createFallbackComponent('Pagination')],
-  ['Tabs', Tabs || createFallbackComponent('Tabs')],
-
-  // Form Components
-  ['Form', Form || createFallbackComponent('Form', 'form')],
-  ['FormGroup', FormGroup || createFallbackComponent('FormGroup')],
-  ['FormSection', FormSection || createFallbackComponent('FormSection')],
-  ['FormActions', FormActions || createFallbackComponent('FormActions')],
-  ['Input', Input || createFallbackComponent('Input', 'input')],
-  ['Select', Select || createFallbackComponent('Select', 'select')],
-  ['Checkbox', Checkbox || createFallbackComponent('Checkbox', 'input')],
-  ['Radio', Radio || createFallbackComponent('Radio', 'input')],
-  ['RadioGroup', RadioGroup || createFallbackComponent('RadioGroup')],
-  [
-    'ConditionSelector',
-    ConditionSelector || createFallbackComponent('ConditionSelector'),
-  ],
-
-  // UI Components
-  ['Button', Button || createFallbackComponent('Button', 'button')],
-  ['Link', Link || createFallbackComponent('Link', 'a')],
-  ['Rating', Rating || createFallbackComponent('Rating')],
-  ['PriceDisplay', PriceDisplay || createFallbackComponent('PriceDisplay')],
-  [
-    'StepsIndicator',
-    StepsIndicator || createFallbackComponent('StepsIndicator'),
-  ],
-
-  // Blog Components
-  ['BlogCard', BlogCard || createFallbackComponent('BlogCard', 'article')],
-  ['BlogList', BlogList || createFallbackComponent('BlogList')],
-  [
-    'BlogDetail',
-    BlogDetail || createFallbackComponent('BlogDetail', 'article'),
-  ],
-
-  // Product Components
-  [
-    'ProductCard',
-    ProductCard || createFallbackComponent('ProductCard', 'article'),
-  ],
-
-  // Specialized Components
-  [
-    'PhoneRepairForm',
-    PhoneRepairForm || createFallbackComponent('PhoneRepairForm', 'form'),
-  ],
-  [
-    'UsedPhonePriceForm',
-    UsedPhonePriceForm || createFallbackComponent('UsedPhonePriceForm', 'form'),
-  ],
-  ['ContactInfo', ContactInfo || createFallbackComponent('ContactInfo')],
-  [
-    'StickyContactIcons',
-    StickyContactIcons || createFallbackComponent('StickyContactIcons'),
-  ],
-  ['Map', MapComponent || createFallbackComponent('Map')], // Use renamed import
+// Add fallbacks for components that might not be exported but we know exist
+const expectedComponents = [
+  'Grid',
+  'Section',
+  'Page',
+  'Hero',
+  'MuchandyHero',
+  'Typography',
+  'Image',
+  'Logo',
+  'Header',
+  'Navigation',
+  'Pagination',
+  'Tabs',
+  'Input',
+  'Select',
+  'Radio',
+  'RadioGroup',
+  'Link',
+  'Rating',
+  'PriceDisplay',
+  'StepsIndicator',
+  'ProductCard',
+  'PhoneRepairForm',
+  'UsedPhonePriceForm',
+  'StickyContactIcons',
+  'Map',
 ];
 
+expectedComponents.forEach(componentName => {
+  // Only add if not already in the list
+  if (!COMPONENT_FACTORIES_DATA.find(([name]) => name === componentName)) {
+    COMPONENT_FACTORIES_DATA.push([
+      componentName,
+      SvarogUICore[componentName] || createFallbackComponent(componentName),
+    ]);
+  }
+});
+
+console.log('Total components registered:', COMPONENT_FACTORIES_DATA.length);
+
 /**
- * Component factory registry - using JavaScript's built-in Map
+ * Component factory registry
  */
 export const COMPONENT_FACTORIES = new Map(COMPONENT_FACTORIES_DATA);
 
 /**
  * CMS to Svarog-UI component mapping
+ * This mapping stays the same regardless of what components are available
  */
 export const CMS_COMPONENT_MAP = new Map([
   // Layout
