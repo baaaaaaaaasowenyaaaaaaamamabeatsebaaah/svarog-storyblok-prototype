@@ -1,354 +1,362 @@
-# Svarog-UI + Storyblok Integration Template
+# Svarog-UI + Storyblok Customer Website Template
 
-A production-ready template for building modern websites using
-[Svarog-UI Component Library](https://www.npmjs.com/package/svarog-ui) and
-[Storyblok CMS](https://www.storyblok.com/). Create beautiful, maintainable websites in minutes with
-live preview functionality and seamless component integration.
+My personal template for building customer websites with Svarog-UI and Storyblok.
 
-## 🚀 Quick Start
-
-Get your website running in under 5 minutes:
+## 🚀 New Customer Project
 
 ```bash
-# 1. Clone the template
-git clone <template-repo> my-website
-cd my-website
-
-# 2. Run the setup wizard
+# 1. Clone and setup
+git clone [this-repo] customer-name
+cd customer-name
 npm install
-npm run setup
 
-# 3. Start development
+# 2. Run setup wizard
+npm run new:customer
+
+# 3. Import Storyblok components
+npm run import:storyblok
+
+# 4. Start development
 npm run dev
 ```
 
-The setup wizard will guide you through:
+## 📋 Common Tasks
 
-- 🔧 Project configuration
-- 🔑 Storyblok token setup
-- 🎨 Theme selection
-- ✨ Feature selection
-- 🚀 Deployment configuration
+### Components
 
-## 🎯 Features
+- Create component: `npm run create:component ComponentName`
+- Import from Storyblok: `npm run import:storyblok`
 
-- **🧩 40+ Pre-built Components** - Hero sections, cards, forms, navigation, and more
-- **🎨 Multiple Themes** - Default, Cabalou (modern purple), Muchandy (warm tones)
-- **👁️ Live Preview** - Real-time content updates in Storyblok Visual Editor
-- **📱 Fully Responsive** - Mobile-first design that works on all devices
-- **⚡ Performance Optimized** - Lazy loading, code splitting, and caching
-- **🔧 Developer Friendly** - Clean code, comprehensive docs, and helpful tooling
-- **🚢 Production Ready** - SEO, security headers, and deployment configs included
+### Development
 
-## 📋 Prerequisites
+- Start dev server: `npm run dev`
+- Build production: `npm run build`
+- Run tests: `npm test`
+- Check code: `npm run lint`
 
-- Node.js 18+ and npm 8+
-- Storyblok account (free tier works)
-- Basic knowledge of JavaScript and HTML
+### Deployment
 
-## 🛠️ Project Structure
+- Railway: `railway up` or `npm run deploy:railway`
+- Vercel: `vercel --prod` or `npm run deploy:vercel`
+- Generic Node.js: `npm start`
+
+## 🎨 Customer Customization Points
+
+### Theme Colors
+
+Edit `src/integration/themeManager.js` or use CSS variables:
+
+```css
+:root {
+  --color-primary: #customer-brand-color;
+  --color-secondary: #secondary-color;
+  --color-text: #333333;
+  --color-bg: #ffffff;
+}
+```
+
+### Custom Components
+
+Add to `src/components/custom/`:
+
+```javascript
+// src/components/custom/CustomerHero.js
+export const CustomerHero = props => {
+  const element = document.createElement('div');
+  element.className = 'customer-hero';
+  element.innerHTML = `<h1>${props.title}</h1>`;
+
+  return {
+    getElement: () => element,
+    update: newProps => {
+      /* update logic */
+    },
+    destroy: () => element.remove(),
+  };
+};
+```
+
+### Features
+
+Add business logic to `src/features/`:
+
+- Contact forms
+- Newsletter signup
+- Custom integrations
+- Analytics
+- Chat widgets
+
+### Storyblok Components
+
+Component templates in `.storyblok/customer-components/`:
+
+- `base-components.json` - Essential components
+- `e-commerce.json` - Shop components
+- `blog.json` - Blog components
+- `landing-page.json` - Marketing components
+
+## 📁 Project Structure
 
 ```
-svarog-storyblok-template/
-├── .storyblok/              # Storyblok component templates
-│   ├── components.json      # Import-ready component definitions
-│   └── stories/            # Example story templates
 ├── src/
-│   ├── app.js              # Main application logic
-│   ├── components/         # Component extensions
-│   │   ├── custom/        # Your custom components
-│   │   └── examples/      # Example implementations
-│   ├── features/          # Feature modules (blog, e-commerce, etc.)
-│   ├── integration/       # Storyblok integration layer
-│   ├── config/           # Configuration files
-│   ├── theme/            # Theme customizations
-│   └── utils/            # Utility functions
-├── docs/                  # Documentation
-├── scripts/              # Build and setup scripts
-└── tests/                # Integration tests
+│   ├── components/
+│   │   └── custom/          # Customer-specific components
+│   ├── features/            # Customer features (forms, etc)
+│   ├── integration/         # Storyblok integration (core)
+│   ├── config/              # Component mappings
+│   ├── styles/              # Custom styles
+│   └── utils/               # Utilities
+├── scripts/
+│   ├── new-customer.js      # Customer setup wizard
+│   ├── import-storyblok.js  # Component importer
+│   └── create-component.js  # Component generator
+├── .storyblok/
+│   └── customer-components/ # Storyblok templates
+├── public/                  # Static assets
+│   ├── favicon.svg
+│   └── robots.txt
+└── server/                  # Production server
 ```
-
-## 🎨 Available Components
-
-### Layout Components
-
-- **Grid** - Responsive grid system (1-12 columns)
-- **Section** - Content sections with padding and themes
-- **Page** - Page wrapper with metadata
-
-### Content Components
-
-- **Hero Section** - Eye-catching headers with CTA
-- **Text Block** - Rich text with formatting
-- **Card** - Feature/content cards with variants
-- **Image** - Responsive images with lazy loading
-
-### Navigation
-
-- **Header** - Site header with logo and nav
-- **Navigation** - Horizontal/vertical menus
-- **Footer** - Site footer with links
-
-### Forms
-
-- **Form** - Form wrapper with validation
-- **Input** - Text, email, number inputs
-- **Select** - Dropdown selections
-- **Button** - Interactive buttons
-
-### UI Elements
-
-- **Tabs** - Tabbed content
-- **Rating** - Star ratings
-- **Price Display** - Product pricing
 
 ## 🔧 Configuration
 
-### Environment Variables
+### Environment Variables (.env)
 
-Create a `.env` file in the root directory:
-
-```env
-# Storyblok Configuration
-VITE_STORYBLOK_TOKEN=your_preview_token_here
-VITE_STORYBLOK_VERSION=draft
+```bash
+# Storyblok
+VITE_STORYBLOK_TOKEN=your_preview_token
+VITE_STORYBLOK_VERSION=draft           # draft or published
 VITE_STORYBLOK_SPACE_ID=your_space_id
-VITE_STORYBLOK_REGION=eu
+VITE_STORYBLOK_REGION=eu              # eu, us, ca, ap
 
-# Application Settings
-NODE_ENV=development
-VITE_DEFAULT_THEME=default
+# Theme
+VITE_PRIMARY_COLOR=#007bff
+VITE_DEFAULT_THEME=default            # default, cabalou, muchandy
+
+# Features
+FEATURE_CONTACT_FORM=true
+FEATURE_BLOG=false
+FEATURE_ECOMMERCE=false
+
+# Environment
+NODE_ENV=development                  # development or production
 PORT=3000
 ```
 
 ### Storyblok Setup
 
-1. **Create a Storyblok Space**
+1. Create space in Storyblok
+2. Get preview token from Settings > Access Tokens
+3. Run `npm run import:storyblok` to import components
+4. Create "home" story with slug "home"
 
-   ```
-   1. Go to https://app.storyblok.com
-   2. Create a new space
-   3. Get your preview token from Settings → Access Tokens
-   ```
+## 🐛 Debug Mode
 
-2. **Import Components**
-
-   ```bash
-   npm run import:storyblok
-   ```
-
-3. **Create Your First Story**
-   - Name: "Home"
-   - Slug: "home"
-   - Content type: "Page"
-
-## 🏗️ Development
-
-### Creating Custom Components
-
-Use the component generator:
-
-```bash
-npm run create:component MyComponent
-```
-
-This creates:
-
-- Component file with Svarog-UI integration
-- Test file with basic tests
-- Storyblok component definition
-- Automatic registration
-
-### Manual Component Creation
+Enable debug panel in development:
 
 ```javascript
-// src/components/custom/MyComponent.js
-export const MyComponent = props => {
-  const element = document.createElement('div');
-  element.className = 'my-component';
-  element.innerHTML = `<h2>${props.title}</h2>`;
-
-  return {
-    getElement: () => element,
-    update: newProps => {
-      element.querySelector('h2').textContent = newProps.title;
-    },
-    destroy: () => {
-      element.remove();
-    },
-  };
-};
+// In browser console
+localStorage.setItem('debug', 'true');
+location.reload();
+// Press Ctrl+Shift+D to toggle panel
 ```
 
-### Adding Features
+Features:
 
-The template supports modular features:
-
-- **Blog** - Full blogging system
-- **E-commerce** - Product listings and cart
-- **Multi-language** - i18n support
-- **Analytics** - Google Analytics integration
-- **Contact Forms** - Form handling
-
-Enable features during setup or add them manually in `src/features/`.
-
-## 🎨 Theming
-
-### Using Built-in Themes
-
-```javascript
-// Change theme programmatically
-import { switchTheme } from 'svarog-ui';
-
-switchTheme('cabalou'); // or 'default', 'muchandy'
-```
-
-### Creating Custom Themes
-
-```javascript
-// src/theme/custom-theme.js
-export const customTheme = {
-  name: 'custom',
-  colors: {
-    primary: '#007bff',
-    secondary: '#6c757d',
-    // ... more colors
-  },
-  apply: () => {
-    // Apply CSS variables
-  },
-};
-```
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-npm test
-
-# Watch mode
-npm run test:watch
-
-# Coverage report
-npm run test:coverage
-```
-
-## 📦 Building for Production
-
-```bash
-# Build the project
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-The build process:
-
-- Optimizes bundle size
-- Minifies code
-- Generates source maps
-- Copies static assets
+- Component inspector
+- Performance metrics
+- Cache statistics
+- Network requests
+- Theme switcher
 
 ## 🚀 Deployment
 
-### Railway (Recommended)
+### Pre-Deployment Checklist
+
+- [ ] Set `NODE_ENV=production`
+- [ ] Use Storyblok public token
+- [ ] Optimize images
+- [ ] Test all forms
+- [ ] Check SEO meta tags
+- [ ] Verify analytics
+- [ ] Run Lighthouse audit
+
+### Railway
 
 ```bash
-# Deploy to Railway
+# First time
+railway login
+railway link
+railway up
+
+# Updates
 railway up
 ```
 
 ### Vercel
 
 ```bash
-# Deploy to Vercel
+# First time
+vercel
+
+# Production
 vercel --prod
 ```
 
-### Netlify
+### Generic Node.js
 
 ```bash
-# Deploy to Netlify
-netlify deploy --prod
+npm run build
+NODE_ENV=production npm start
 ```
 
-### Environment Variables for Production
+## 📊 Performance
 
-```env
-NODE_ENV=production
-VITE_STORYBLOK_TOKEN=your_public_token
-VITE_STORYBLOK_VERSION=published
+### Bundle Analysis
+
+```bash
+npm run analyze
+# Opens visual bundle analyzer
 ```
 
-## 📚 Documentation
+### Web Vitals Monitoring
 
-- **[Customization Guide](docs/CUSTOMIZATION.md)** - Add components and features
-- **[Component Reference](docs/COMPONENTS.md)** - All available components
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment
-- **[API Reference](docs/API.md)** - Integration APIs
+Automatically tracks:
 
-## 🐛 Troubleshooting
+- LCP (Largest Contentful Paint)
+- FID (First Input Delay)
+- CLS (Cumulative Layout Shift)
+- FCP (First Contentful Paint)
+- TTFB (Time to First Byte)
 
-### Common Issues
+### Image Optimization
 
-**Components not rendering?**
+All Storyblok images are automatically:
 
-- Check component is registered in `src/config/components.js`
-- Verify Storyblok component names match exactly
-- Look for console errors
+- Converted to WebP
+- Lazy loaded
+- Responsive with srcset
+- Optimized with focal points
 
-**Live preview not working?**
+## 🎯 Common Patterns
 
-- Ensure HTTPS is enabled in dev server
-- Check Storyblok Visual Editor settings
-- Verify preview token permissions
-
-**Build errors?**
-
-- Clear `node_modules` and reinstall
-- Check Node.js version (18+)
-- Verify all environment variables
-
-### Debug Mode
-
-Enable detailed logging:
+### Contact Form
 
 ```javascript
-// In development
+// In your component
+import { setupContactForm } from '@/features/contact-form.js';
+
+const form = document.querySelector('#contact-form');
+setupContactForm(form, {
+  endpoint: '/api/contact',
+  successMessage: "Thanks! We'll be in touch.",
+  errorMessage: 'Oops! Please try again.',
+});
+```
+
+### Multi-language Setup
+
+```javascript
+// Add to router
+app.navigateToRoute(`/${language}/home`);
+
+// In Storyblok
+// Create folders: en/, de/, fr/
+// Duplicate stories per language
+```
+
+### Analytics Integration
+
+```javascript
+// src/features/analytics.js
+// Add GA4, Plausible, or other analytics
+if (window.gtag) {
+  gtag('event', 'form_submit', {
+    form_name: 'contact',
+  });
+}
+```
+
+## 🔐 Security
+
+### Headers (automatically set)
+
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- X-XSS-Protection: 1; mode=block
+- Referrer-Policy: strict-origin-when-cross-origin
+
+### Content Security Policy
+
+Configured for Storyblok integration in `server/index.js`
+
+### Rate Limiting
+
+API endpoints limited to 100 requests per 15 minutes
+
+## 📝 Notes & Tips
+
+### Component Best Practices
+
+1. Always provide `getElement()`, `update()`, and `destroy()`
+2. Clean up event listeners in `destroy()`
+3. Use semantic HTML
+4. Keep components focused (single responsibility)
+
+### Storyblok Tips
+
+1. Use draft version for development
+2. Use published version for production
+3. Enable live preview in Visual Editor
+4. Keep component names consistent
+
+### Performance Tips
+
+1. Use code splitting for large features
+2. Lazy load below-the-fold images
+3. Minimize third-party scripts
+4. Use Storyblok's CDN for assets
+
+### Customer Handoff
+
+1. Document custom components
+2. Provide Storyblok training
+3. Set up error monitoring
+4. Create maintenance plan
+
+## 🆘 Troubleshooting
+
+### Component not rendering?
+
+- Check component is registered in `src/config/components.js`
+- Verify Storyblok component name matches
+- Look for console errors
+
+### Storyblok connection issues?
+
+- Verify token in `.env`
+- Check token permissions
+- Ensure correct version (draft/published)
+
+### Build errors?
+
+```bash
+# Clean install
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear caches
+rm -rf dist/
+```
+
+### Debug production issues
+
+```javascript
+// Temporarily enable debug in production
 localStorage.setItem('debug', 'true');
 ```
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Development Philosophy
-
-1. **Concise Code** - Write the shortest code that works correctly
-2. **Component-Based** - Everything is a reusable component
-3. **Performance First** - Optimize for speed and efficiency
-4. **Developer Experience** - Make it easy and enjoyable
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Svarog-UI](https://github.com/your-org/svarog-ui) - The component library
-- [Storyblok](https://www.storyblok.com) - The headless CMS
-- All our contributors and users
-
-## 🆘 Support
-
-- 📖 [Documentation](https://your-docs-site.com)
-- 💬 [Discord Community](https://discord.gg/your-invite)
-- 🐛 [Issue Tracker](https://github.com/your-org/template/issues)
-- 📧 [Email Support](mailto:support@your-domain.com)
-
 ---
 
-Built with ❤️ using Svarog-UI + Storyblok
-
-**Ready to build something amazing? Let's go! 🚀**
+**Remember:** This is your master template. Always clone it for new customers, never commit
+customer-specific code back to this template.
