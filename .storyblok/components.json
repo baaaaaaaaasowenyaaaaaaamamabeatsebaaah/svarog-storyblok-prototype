@@ -1,0 +1,383 @@
+{
+  "components": [
+    {
+      "name": "hero_section",
+      "display_name": "Hero Section",
+      "schema": {
+        "title": {
+          "type": "text",
+          "pos": 0,
+          "required": true,
+          "default_value": "Welcome to Our Website",
+          "description": "Main heading text"
+        },
+        "subtitle": {
+          "type": "textarea",
+          "pos": 1,
+          "default_value": "Build amazing websites with Svarog-UI and Storyblok",
+          "description": "Supporting text below the title"
+        },
+        "background_image": {
+          "type": "asset",
+          "pos": 2,
+          "filetypes": ["images"],
+          "description": "Background image (recommended: 1920x1080)"
+        },
+        "cta_button": {
+          "type": "bloks",
+          "pos": 3,
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": ["button"],
+          "maximum": 1,
+          "description": "Call-to-action button"
+        },
+        "theme": {
+          "type": "option",
+          "pos": 4,
+          "options": [
+            { "value": "default", "name": "Default" },
+            { "value": "cabalou", "name": "Cabalou (Purple)" },
+            { "value": "muchandy", "name": "Muchandy (Warm)" }
+          ],
+          "default_value": "default",
+          "description": "Visual theme"
+        }
+      },
+      "is_root": false,
+      "is_nestable": true,
+      "preview_field": "title"
+    },
+    {
+      "name": "text_block",
+      "display_name": "Text Block",
+      "schema": {
+        "content": {
+          "type": "richtext",
+          "pos": 0,
+          "required": true,
+          "description": "Rich text content with formatting"
+        },
+        "variant": {
+          "type": "option",
+          "pos": 1,
+          "options": [
+            { "value": "body", "name": "Body Text" },
+            { "value": "heading", "name": "Heading" },
+            { "value": "caption", "name": "Caption" }
+          ],
+          "default_value": "body"
+        },
+        "alignment": {
+          "type": "option",
+          "pos": 2,
+          "options": [
+            { "value": "left", "name": "Left" },
+            { "value": "center", "name": "Center" },
+            { "value": "right", "name": "Right" }
+          ],
+          "default_value": "left"
+        }
+      },
+      "is_root": false,
+      "is_nestable": true,
+      "preview_field": "content"
+    },
+    {
+      "name": "button",
+      "display_name": "Button",
+      "schema": {
+        "text": {
+          "type": "text",
+          "pos": 0,
+          "required": true,
+          "default_value": "Click Me",
+          "description": "Button text"
+        },
+        "url": {
+          "type": "text",
+          "pos": 1,
+          "required": true,
+          "default_value": "#",
+          "description": "Link URL or anchor"
+        },
+        "variant": {
+          "type": "option",
+          "pos": 2,
+          "options": [
+            { "value": "primary", "name": "Primary" },
+            { "value": "secondary", "name": "Secondary" },
+            { "value": "outline", "name": "Outline" }
+          ],
+          "default_value": "primary"
+        },
+        "size": {
+          "type": "option",
+          "pos": 3,
+          "options": [
+            { "value": "small", "name": "Small" },
+            { "value": "medium", "name": "Medium" },
+            { "value": "large", "name": "Large" }
+          ],
+          "default_value": "medium"
+        },
+        "disabled": {
+          "type": "boolean",
+          "pos": 4,
+          "default_value": false
+        }
+      },
+      "is_root": false,
+      "is_nestable": false,
+      "preview_field": "text"
+    },
+    {
+      "name": "card",
+      "display_name": "Card",
+      "schema": {
+        "title": {
+          "type": "text",
+          "pos": 0,
+          "required": true,
+          "default_value": "Card Title"
+        },
+        "content": {
+          "type": "textarea",
+          "pos": 1,
+          "default_value": "Card content goes here"
+        },
+        "image": {
+          "type": "asset",
+          "pos": 2,
+          "filetypes": ["images"]
+        },
+        "link": {
+          "type": "bloks",
+          "pos": 3,
+          "restrict_components": true,
+          "component_whitelist": ["button"],
+          "maximum": 1
+        },
+        "variant": {
+          "type": "option",
+          "pos": 4,
+          "options": [
+            { "value": "default", "name": "Default" },
+            { "value": "elevated", "name": "Elevated" },
+            { "value": "outlined", "name": "Outlined" }
+          ],
+          "default_value": "default"
+        }
+      },
+      "is_root": false,
+      "is_nestable": true,
+      "preview_field": "title"
+    },
+    {
+      "name": "grid",
+      "display_name": "Grid Layout",
+      "schema": {
+        "columns": {
+          "type": "number",
+          "pos": 0,
+          "default_value": "12",
+          "description": "Number of grid columns (1-12)"
+        },
+        "gap": {
+          "type": "option",
+          "pos": 1,
+          "options": [
+            { "value": "small", "name": "Small" },
+            { "value": "medium", "name": "Medium" },
+            { "value": "large", "name": "Large" }
+          ],
+          "default_value": "medium"
+        },
+        "children": {
+          "type": "bloks",
+          "pos": 2,
+          "required": true,
+          "description": "Grid items"
+        }
+      },
+      "is_root": false,
+      "is_nestable": true
+    },
+    {
+      "name": "section",
+      "display_name": "Section",
+      "schema": {
+        "variant": {
+          "type": "option",
+          "pos": 0,
+          "options": [
+            { "value": "default", "name": "Default" },
+            { "value": "primary", "name": "Primary" },
+            { "value": "secondary", "name": "Secondary" }
+          ],
+          "default_value": "default"
+        },
+        "padding": {
+          "type": "option",
+          "pos": 1,
+          "options": [
+            { "value": "small", "name": "Small" },
+            { "value": "medium", "name": "Medium" },
+            { "value": "large", "name": "Large" }
+          ],
+          "default_value": "medium"
+        },
+        "children": {
+          "type": "bloks",
+          "pos": 2,
+          "required": true
+        }
+      },
+      "is_root": false,
+      "is_nestable": true
+    },
+    {
+      "name": "image",
+      "display_name": "Image",
+      "schema": {
+        "src": {
+          "type": "asset",
+          "pos": 0,
+          "required": true,
+          "filetypes": ["images"]
+        },
+        "alt": {
+          "type": "text",
+          "pos": 1,
+          "required": true,
+          "default_value": "Image description",
+          "description": "Alternative text for accessibility"
+        },
+        "caption": {
+          "type": "text",
+          "pos": 2,
+          "description": "Optional image caption"
+        },
+        "responsive": {
+          "type": "boolean",
+          "pos": 3,
+          "default_value": true
+        },
+        "lazy": {
+          "type": "boolean",
+          "pos": 4,
+          "default_value": true,
+          "description": "Enable lazy loading"
+        }
+      },
+      "is_root": false,
+      "is_nestable": false,
+      "preview_field": "alt"
+    },
+    {
+      "name": "navigation",
+      "display_name": "Navigation Menu",
+      "schema": {
+        "items": {
+          "type": "bloks",
+          "pos": 0,
+          "required": true,
+          "restrict_components": true,
+          "component_whitelist": ["nav_item"]
+        },
+        "variant": {
+          "type": "option",
+          "pos": 1,
+          "options": [
+            { "value": "horizontal", "name": "Horizontal" },
+            { "value": "vertical", "name": "Vertical" }
+          ],
+          "default_value": "horizontal"
+        }
+      },
+      "is_root": false,
+      "is_nestable": false
+    },
+    {
+      "name": "nav_item",
+      "display_name": "Navigation Item",
+      "schema": {
+        "text": {
+          "type": "text",
+          "pos": 0,
+          "required": true,
+          "default_value": "Menu Item"
+        },
+        "url": {
+          "type": "text",
+          "pos": 1,
+          "required": true,
+          "default_value": "/"
+        },
+        "active": {
+          "type": "boolean",
+          "pos": 2,
+          "default_value": false
+        }
+      },
+      "is_root": false,
+      "is_nestable": false,
+      "preview_field": "text"
+    },
+    {
+      "name": "header",
+      "display_name": "Site Header",
+      "schema": {
+        "logo": {
+          "type": "asset",
+          "pos": 0,
+          "filetypes": ["images"]
+        },
+        "navigation": {
+          "type": "bloks",
+          "pos": 1,
+          "restrict_components": true,
+          "component_whitelist": ["navigation"],
+          "maximum": 1
+        },
+        "variant": {
+          "type": "option",
+          "pos": 2,
+          "options": [
+            { "value": "default", "name": "Default" },
+            { "value": "transparent", "name": "Transparent" },
+            { "value": "fixed", "name": "Fixed" }
+          ],
+          "default_value": "default"
+        }
+      },
+      "is_root": false,
+      "is_nestable": false
+    },
+    {
+      "name": "footer",
+      "display_name": "Site Footer",
+      "schema": {
+        "copyright": {
+          "type": "text",
+          "pos": 0,
+          "default_value": "© 2024 Your Company. All rights reserved."
+        },
+        "links": {
+          "type": "bloks",
+          "pos": 1,
+          "restrict_components": true,
+          "component_whitelist": ["link"]
+        },
+        "social": {
+          "type": "bloks",
+          "pos": 2,
+          "restrict_components": true,
+          "component_whitelist": ["social_link"]
+        }
+      },
+      "is_root": false,
+      "is_nestable": false
+    }
+  ]
+}

@@ -77,3 +77,16 @@ coverage/
 .idea/
 *.sublime-project
 *.sublime-workspace
+
+# Build artifacts
+dist/
+build/
+bundle-report.html
+.cache/
+
+# Performance reports
+lighthouse-report.html
+.lighthouseci/
+
+# Size limit
+.size-limit.json

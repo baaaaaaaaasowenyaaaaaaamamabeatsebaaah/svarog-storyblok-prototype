@@ -1,5 +1,4 @@
 // src/config/components.js
-
 /**
  * Component registry configuration
  * Smart loader that imports all components from svarog-ui-core
@@ -8,11 +7,8 @@
 import * as SvarogUICore from 'svarog-ui-core';
 import { defaultTheme } from 'svarog-ui';
 
-// Log what's available in the core package
-console.log(
-  'Available exports from svarog-ui-core:',
-  Object.keys(SvarogUICore)
-);
+// CUSTOM COMPONENT IMPORTS
+// Add your custom component imports below this line
 
 // Extract all component-related exports (excluding utilities)
 const utilityExports = [
@@ -51,7 +47,14 @@ const componentNames = Object.keys(SvarogUICore).filter(
   key => !utilityExports.includes(key)
 );
 
-console.log('Detected components:', componentNames);
+// Log available components in development
+if (process.env.NODE_ENV === 'development') {
+  console.log(
+    'Available exports from svarog-ui-core:',
+    Object.keys(SvarogUICore)
+  );
+  console.log('Detected components:', componentNames);
+}
 
 // Extract theme utilities
 const { ThemeManager, getCurrentTheme, registerTheme, switchTheme } =
@@ -158,7 +161,12 @@ expectedComponents.forEach(componentName => {
   }
 });
 
-console.log('Total components registered:', COMPONENT_FACTORIES_DATA.length);
+// CUSTOM COMPONENT FACTORIES
+// Add your custom component factories below this line
+
+if (process.env.NODE_ENV === 'development') {
+  console.log('Total components registered:', COMPONENT_FACTORIES_DATA.length);
+}
 
 /**
  * Component factory registry
@@ -224,6 +232,9 @@ export const CMS_COMPONENT_MAP = new Map([
   ['contact_info', 'ContactInfo'],
   ['sticky_contact_icons', 'StickyContactIcons'],
   ['map', 'Map'],
+
+  // CUSTOM COMPONENT MAPPINGS
+  // Add your custom CMS mappings below this line
 ]);
 
 /**
@@ -560,6 +571,9 @@ export const COMPONENT_SCHEMAS = {
     height: { type: 'string', default: '400px' },
     markers: { type: 'array' },
   },
+
+  // CUSTOM COMPONENT SCHEMAS
+  // Add your custom component schemas below this line
 };
 
 /**

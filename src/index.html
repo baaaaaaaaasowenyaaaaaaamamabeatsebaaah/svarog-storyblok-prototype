@@ -1,3 +1,4 @@
+<!-- src/index.html -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Svarog-UI + Storyblok Integration Example"
+      content="Svarog-UI + Storyblok Integration - Build beautiful websites in minutes"
     />
-    <title>Svarog-UI + Storyblok Example</title>
+    <title>Svarog-UI + Storyblok Template</title>
 
-    <!-- Preconnect to improve performance -->
+    <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://api.storyblok.com" />
     <link rel="preconnect" href="https://a.storyblok.com" />
 
-    <!-- Critical styles -->
+    <!-- Critical CSS for initial paint -->
     <style>
       /* Critical CSS for initial load */
       * {
@@ -44,197 +45,115 @@
         opacity: 1;
       }
 
-      /* Loading state */
+      /* Loading state - Clean and minimal */
       .app-loading {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 50vh;
-        gap: 1rem;
-        padding: 2rem;
+        min-height: 100vh;
+        gap: 1.5rem;
       }
 
       .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid var(--color-primary, #007bff);
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(0, 123, 255, 0.1);
+        border-top-color: #007bff;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        animation: spin 0.8s linear infinite;
       }
 
       @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
+        to {
           transform: rotate(360deg);
         }
       }
 
-      /* Error and fallback states */
+      .loading-text {
+        color: #666;
+        font-size: 14px;
+      }
+
+      /* Error states - User-friendly */
       .app-error,
-      .fallback-content {
-        text-align: center;
-        padding: 2rem;
+      .setup-guide {
         max-width: 600px;
         margin: 2rem auto;
+        padding: 2rem;
+        text-align: center;
       }
 
-      .app-error h1,
-      .fallback-content h1 {
-        color: var(--color-primary, #007bff);
+      .app-error h1 {
+        color: #dc3545;
         margin-bottom: 1rem;
       }
 
-      .app-error p,
-      .fallback-content p {
+      .setup-guide h1 {
+        color: #007bff;
         margin-bottom: 1rem;
-        color: var(--color-text-secondary, #666);
       }
 
-      .app-error ol,
-      .fallback-content ol {
-        text-align: left;
-        margin: 1rem 0;
-        padding-left: 2rem;
-      }
-
-      .app-error code,
-      .fallback-content code {
-        background: #f5f5f5;
-        padding: 0.2rem 0.4rem;
-        border-radius: 3px;
-        font-family: monospace;
-      }
-
-      .retry-button {
-        background: var(--color-primary, #007bff);
-        color: white;
-        border: none;
+      .button {
+        display: inline-block;
         padding: 0.75rem 1.5rem;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
         border-radius: 4px;
+        border: none;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 16px;
         transition: background-color 0.2s;
       }
 
-      .retry-button:hover {
-        background: var(--color-primary-hover, #0056b3);
+      .button:hover {
+        background: #0056b3;
       }
 
-      .error-details {
-        margin-top: 1rem;
-        text-align: left;
+      .button-secondary {
+        background: #6c757d;
       }
 
-      .error-details summary {
-        cursor: pointer;
-        padding: 0.5rem;
-        background: #f8f9fa;
-        border-radius: 4px;
+      .button-secondary:hover {
+        background: #5a6268;
       }
 
-      .error-details pre {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 4px;
-        overflow: auto;
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
+      /* Hide development indicators in production */
+      .dev-only {
+        display: none;
       }
 
-      /* Skip link for accessibility */
+      /* Accessibility */
       .skip-link {
         position: absolute;
         top: -40px;
-        left: 6px;
+        left: 10px;
         background: #000;
         color: #fff;
-        padding: 8px 12px;
+        padding: 8px 16px;
         text-decoration: none;
         z-index: 1000;
         border-radius: 4px;
       }
 
       .skip-link:focus {
-        top: 6px;
+        top: 10px;
       }
 
-      /* App container */
-      #app {
-        min-height: 100vh;
-        position: relative;
-      }
-
-      /* Theme switcher (development only) */
-      .theme-switcher {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 0.75rem;
-        border-radius: 8px;
-        font-size: 0.875rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
-      }
-
-      .theme-switcher label {
-        font-weight: 500;
-        margin-right: 0.5rem;
-      }
-
-      .theme-switcher select {
-        margin-left: 0.5rem;
-        padding: 0.25rem 0.5rem;
-        border: none;
-        border-radius: 4px;
-        background: white;
-        font-size: 0.875rem;
-      }
-
-      /* Component fallback styles */
-      .component-fallback {
-        padding: 1rem;
-        border: 2px dashed #ddd;
-        background: #fafafa;
-        border-radius: 4px;
-        margin: 0.5rem 0;
-        font-family: monospace;
-        font-size: 0.875rem;
-      }
-
-      /* Storyblok live preview indicator */
-      .storyblok-preview-active {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: #00b3b0;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        z-index: 1000;
-        opacity: 0.8;
-      }
-
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        .theme-switcher {
-          top: 10px;
-          right: 10px;
-          padding: 0.5rem;
-          font-size: 0.75rem;
+      /* Print styles */
+      @media print {
+        .no-print {
+          display: none !important;
         }
+      }
 
-        .app-error,
-        .fallback-content {
-          padding: 1rem;
-          margin: 1rem;
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
         }
       }
     </style>
@@ -243,122 +162,24 @@
     <script src="//app.storyblok.com/f/storyblok-v2-latest.js"></script>
   </head>
   <body>
-    <!-- Skip link for accessibility -->
+    <!-- Skip to main content for accessibility -->
     <a href="#app" class="skip-link">Skip to main content</a>
 
     <!-- Main application container -->
-    <div id="app" role="main">
+    <main id="app" role="main">
       <!-- Initial loading state -->
       <div class="app-loading">
         <div class="loading-spinner"></div>
-        <p>Initializing Svarog-UI + Storyblok Example...</p>
+        <p class="loading-text">Loading your website...</p>
       </div>
-    </div>
+    </main>
 
-    <!-- Development indicators -->
-    <div
-      id="storyblok-preview-indicator"
-      class="storyblok-preview-active"
-      style="display: none"
-    >
-      🔄 Live Preview Active
-    </div>
+    <!-- Development mode indicator (hidden in production) -->
+    <div id="dev-indicator" class="dev-only no-print"></div>
 
-    <!-- Application initialization -->
-    <script type="module">
-      import { createApp } from './app.js';
-
-      // Initialize app when DOM is ready
-      document.addEventListener('DOMContentLoaded', async () => {
-        try {
-          console.log('🚀 Starting Svarog-UI + Storyblok Example');
-
-          // Create app instance
-          const app = createApp({
-            container: document.getElementById('app'),
-            theme: localStorage.getItem('svarog-theme') || 'default',
-            enableLivePreview: true, // Always enable for demo
-          });
-
-          // Initialize the app
-          await app.init();
-
-          // Make app globally available for debugging
-          window.app = app;
-
-          // Show live preview indicator if in development
-          if (window.storyblok) {
-            const indicator = document.getElementById(
-              'storyblok-preview-indicator'
-            );
-            indicator.style.display = 'block';
-
-            // Hide after 3 seconds
-            setTimeout(() => {
-              indicator.style.opacity = '0';
-              setTimeout(() => (indicator.style.display = 'none'), 300);
-            }, 3000);
-          }
-
-          // Handle app ready event
-          window.addEventListener('appReady', event => {
-            console.log('🎉 Example app is ready!');
-            console.log('🎨 Current theme:', event.detail.theme);
-            console.log(
-              '📝 Try editing content in Storyblok to see live preview!'
-            );
-          });
-
-          // Handle theme changes
-          window.addEventListener('themeChange', event => {
-            console.log('🎨 Theme changed to:', event.detail.theme);
-          });
-        } catch (error) {
-          console.error('❌ Failed to initialize app:', error);
-
-          // Show fallback error message
-          document.getElementById('app').innerHTML = `
-            <div class="app-error">
-              <h1>🚧 Example App Setup</h1>
-              <p>Welcome to the Svarog-UI + Storyblok integration example!</p>
-              <p><strong>To see the full example:</strong></p>
-              <ol>
-                <li>Add your Storyblok preview token to <code>.env</code> file</li>
-                <li>Create a 'home' story in your Storyblok space</li>
-                <li>Add hero_section, text_block, button, and card components</li>
-                <li>Reload this page to see your content!</li>
-              </ol>
-              <button onclick="window.location.reload()" class="retry-button">
-                Try Again
-              </button>
-              <div class="error-details">
-                <details>
-                  <summary>Technical Details</summary>
-                  <pre>${error.message}\n${error.stack}</pre>
-                </details>
-              </div>
-            </div>
-          `;
-        }
-      });
-
-      // Performance monitoring
-      window.addEventListener('load', () => {
-        const navigation = performance.getEntriesByType('navigation')[0];
-        if (navigation) {
-          console.log('📊 Performance:', {
-            'Load Time': `${Math.round(navigation.loadEventEnd - navigation.fetchStart)}ms`,
-            'DOM Ready': `${Math.round(navigation.domContentLoadedEventEnd - navigation.fetchStart)}ms`,
-          });
-        }
-      });
-
-      // Storyblok debugging
-      if (window.storyblok) {
-        window.storyblok.on(['input', 'published', 'change'], event => {
-          console.log('🔄 Storyblok event:', event.action);
-        });
-      }
-    </script>
+    <!-- 
+      Webpack will automatically inject the bundled JavaScript here.
+      No manual script tags needed!
+    -->
   </body>
 </html>

@@ -1,26 +1,18 @@
 // src/index.js
-
 /**
  * Main entry point for Svarog-UI + Storyblok integration
  * This file is loaded by Webpack and initializes the application
  */
 
-// Import our application styles
 import './styles/main.css';
-
-// Import our application
 import { createApp } from './app.js';
 import { isDevelopment } from './utils/environment.js';
 import { initializeTheme } from './integration/themeManager.js';
 
 // Initialize application when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
   try {
-    if (isDevelopment()) {
-      console.log('🚀 Starting Svarog-UI + Storyblok Integration');
-    }
-
-    // Initialize theme system first
+    // Initialize theme system
     initializeTheme();
 
     // Get app container
@@ -32,101 +24,103 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Create and initialize app
     const app = createApp({
       container,
-      enableLivePreview: isDevelopment(),
+      enableLivePreview: true,
     });
 
     await app.init();
 
     // Development utilities
     if (isDevelopment()) {
-      // Make app globally available for debugging
+      // Make app available for debugging
       window.app = app;
 
-      // Log helpful info
-      console.log('🔧 Development mode active');
-      console.log('📚 Access app via window.app');
-      console.log('🎯 App status:', app.getStatus());
+      // Add development indicator
+      const devIndicator = document.getElementById('dev-indicator');
+      if (devIndicator) {
+        devIndicator.innerHTML = 'DEV MODE';
+        devIndicator.style.cssText = `
+          position: fixed;
+          bottom: 10px;
+          left: 10px;
+          background: rgba(255, 152, 0, 0.9);
+          color: white;
+          padding: 4px 8px;
+          font-size: 11px;
+          font-weight: bold;
+          border-radius: 3px;
+          pointer-events: none;
+          z-index: 9999;
+          display: block;
+        `;
+      }
+
+      console.log('🚀 Development mode active. Access app via window.app');
     }
 
     // Set up global error handling
-    window.addEventListener('error', event => {
-      console.error('Global error:', event.error);
-
-      if (isDevelopment()) {
-        // Show detailed error in development
-        const errorOverlay = createErrorOverlay(event.error);
-        document.body.appendChild(errorOverlay);
-      }
-    });
-
-    window.addEventListener('unhandledrejection', event => {
-      console.error('Unhandled promise rejection:', event.reason);
-      event.preventDefault();
-    });
+    window.addEventListener('error', handleGlobalError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
   } catch (error) {
-    console.error('❌ App initialization failed:', error);
-
-    // Show fallback error UI
-    const appContainer = document.getElementById('app');
-    if (appContainer) {
-      appContainer.innerHTML = `
-        <div style="
-          text-align: center;
-          padding: 2rem;
-          max-width: 600px;
-          margin: 2rem auto;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        ">
-          <h1 style="color: #dc3545; margin-bottom: 1rem;">
-            Application Error
-          </h1>
-          <p style="margin-bottom: 1.5rem; color: #666;">
-            The application failed to start. Please check the console for details.
-          </p>
-          <button 
-            onclick="window.location.reload()" 
-            style="
-              background: #007bff;
-              color: white;
-              border: none;
-              padding: 0.75rem 1.5rem;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 1rem;
-            "
-          >
-            Reload Page
-          </button>
-          ${
-            isDevelopment()
-              ? `
-            <details style="margin-top: 1rem; text-align: left;">
-              <summary>Error Details</summary>
-              <pre style="
-                background: #f8f9fa;
-                padding: 1rem;
-                border-radius: 4px;
-                overflow: auto;
-                font-size: 0.875rem;
-                margin-top: 0.5rem;
-              ">${error.stack}</pre>
-            </details>
-          `
-              : ''
-          }
-        </div>
-      `;
-    }
+    console.error('Application initialization failed:', error);
+    showErrorUI(error);
   }
-});
+};
 
-/**
- * Creates error overlay for development
- * @param {Error} error - Error object
- * @returns {HTMLElement} Error overlay element
- */
-function createErrorOverlay(error) {
+// Error handlers
+const handleGlobalError = event => {
+  console.error('Runtime error:', event.error);
+  if (isDevelopment()) {
+    // In development, show detailed error overlay
+    showErrorOverlay(event.error);
+  }
+};
+
+const handleUnhandledRejection = event => {
+  console.error('Unhandled promise rejection:', event.reason);
+  event.preventDefault();
+};
+
+// Show user-friendly error UI
+const showErrorUI = error => {
+  const container = document.getElementById('app');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="app-error">
+      <h1>Unable to Load Application</h1>
+      <p>We encountered an error while starting the application.</p>
+      <button class="button" onclick="window.location.reload()">
+        Try Again
+      </button>
+      ${
+        isDevelopment()
+          ? `
+        <details style="margin-top: 2rem; text-align: left;">
+          <summary style="cursor: pointer;">Technical Details</summary>
+          <pre style="
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow: auto;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+          ">${error.stack || error.message}</pre>
+        </details>
+      `
+          : ''
+      }
+    </div>
+  `;
+};
+
+// Development error overlay
+const showErrorOverlay = error => {
+  // Remove existing overlay
+  const existing = document.getElementById('error-overlay');
+  if (existing) existing.remove();
+
   const overlay = document.createElement('div');
+  overlay.id = 'error-overlay';
   overlay.style.cssText = `
     position: fixed;
     top: 0;
@@ -147,7 +141,7 @@ function createErrorOverlay(error) {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
         <h2 style="color: #ff6b6b; margin: 0;">Runtime Error</h2>
         <button 
-          onclick="this.parentElement.parentElement.parentElement.remove()"
+          onclick="document.getElementById('error-overlay').remove()"
           style="
             background: none;
             border: 1px solid #666;
@@ -170,29 +164,28 @@ function createErrorOverlay(error) {
     </div>
   `;
 
-  return overlay;
+  document.body.appendChild(overlay);
+};
+
+// Start application
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 
-// Performance monitoring
-if (isDevelopment()) {
+// Performance monitoring (production-ready)
+if ('addEventListener' in window) {
   window.addEventListener('load', () => {
-    setTimeout(() => {
+    // Only log performance in development
+    if (isDevelopment()) {
       const navigation = performance.getEntriesByType('navigation')[0];
       if (navigation) {
-        console.log('📊 Performance Metrics:', {
-          'Total Load Time': `${Math.round(
-            navigation.loadEventEnd - navigation.fetchStart
-          )}ms`,
-          'DOM Content Loaded': `${Math.round(
-            navigation.domContentLoadedEventEnd - navigation.fetchStart
-          )}ms`,
-          'First Paint': performance.getEntriesByType('paint')[0]?.startTime
-            ? `${Math.round(
-                performance.getEntriesByType('paint')[0].startTime
-              )}ms`
-            : 'N/A',
-        });
+        const loadTime = Math.round(
+          navigation.loadEventEnd - navigation.fetchStart
+        );
+        console.log(`⚡ Page loaded in ${loadTime}ms`);
       }
-    }, 0);
+    }
   });
 }

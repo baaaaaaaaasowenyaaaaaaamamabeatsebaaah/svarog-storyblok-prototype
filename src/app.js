@@ -1,15 +1,14 @@
 // src/app.js
-
 /**
- * Component showcase application with Storyblok integration
- * Loads and displays ALL components from Storyblok CMS
+ * Main application for Svarog-UI + Storyblok integration
+ * Handles routing, content loading, and component rendering
  */
 
 import { createStoryblokClient } from './integration/storyblokClient.js';
 import { isDevelopment } from './utils/environment.js';
 
 /**
- * Creates the showcase application
+ * Creates the main application
  * @param {Object} config - Application configuration
  * @returns {Object} Application API
  */
@@ -26,30 +25,25 @@ export const createApp = (config = {}) => {
   // Initialize Storyblok client
   const storyblok = createStoryblokClient();
 
-  // Current state
+  // Application state
   let currentStory = null;
   let currentRoute = '/';
 
-  if (isDevelopment()) {
-    console.log('🚀 Initializing Svarog-UI Component Showcase');
-    console.log('📡 Loading content from Storyblok...');
-  }
-
   /**
-   * Initializes the application
+   * Initialize the application
    */
   const init = async () => {
     try {
       // Set up routing
       setupRouter();
 
-      // Enable live preview for Storyblok
+      // Enable live preview in development
       if (enableLivePreview && isDevelopment()) {
         enableStoryblokPreview();
       }
 
-      // Load showcase content from Storyblok
-      await loadShowcaseFromStoryblok();
+      // Load initial content
+      await loadContent();
 
       // Mark app as ready
       document.body.classList.add('app-ready');
@@ -57,45 +51,39 @@ export const createApp = (config = {}) => {
       // Dispatch ready event
       window.dispatchEvent(
         new CustomEvent('appReady', {
-          detail: { theme: 'default' },
+          detail: {
+            theme: getCurrentTheme(),
+            route: currentRoute,
+          },
         })
       );
-
-      if (isDevelopment()) {
-        console.log('✅ Component showcase loaded from Storyblok');
-      }
     } catch (error) {
-      console.error('❌ App initialization failed:', error);
-      renderErrorState(error);
+      console.error('App initialization failed:', error);
+      showErrorState(error);
     }
   };
 
   /**
-   * Load showcase page from Storyblok
+   * Load content from Storyblok
    */
-  const loadShowcaseFromStoryblok = async () => {
+  const loadContent = async () => {
     try {
       showLoadingState();
 
-      // Get the current path or default to home
+      // Get the current slug from URL
       const slug = getCurrentSlug();
 
       // Load story from Storyblok
       const story = await storyblok.getStoryWithComponents(slug);
 
-      // Render story to container
-      currentStory = await renderStoryToContainer(story);
+      // Render story
+      currentStory = await renderStory(story);
 
       hideLoadingState();
-
-      if (isDevelopment()) {
-        console.log('📄 Loaded story:', story.name);
-        console.log('🧩 Components:', story.content.body?.length || 0);
-      }
     } catch (error) {
-      console.error('Failed to load from Storyblok:', error);
+      console.error('Failed to load content:', error);
       hideLoadingState();
-      renderStoryblokSetupGuide();
+      showSetupGuide();
     }
   };
 
@@ -104,16 +92,13 @@ export const createApp = (config = {}) => {
    */
   const getCurrentSlug = () => {
     const path = window.location.pathname;
-    if (path === '/' || path === '') {
-      return 'home';
-    }
-    return path.replace(/^\/|\/$/g, '');
+    return path === '/' || path === '' ? 'home' : path.replace(/^\/|\/$/g, '');
   };
 
   /**
    * Render story to container
    */
-  const renderStoryToContainer = async story => {
+  const renderStory = async story => {
     // Clear existing content
     container.innerHTML = '';
 
@@ -123,31 +108,17 @@ export const createApp = (config = {}) => {
         ? story.renderedComponents
         : await storyblok.createComponentsFromStory(story);
 
-    // Add navigation if not present
+    // Add navigation if needed
     if (!container.querySelector('header')) {
-      addNavigationHeader();
+      addDefaultNavigation();
     }
 
-    // Render components to container
+    // Render components
     const elements = components.map(component => {
       const element = component.getElement();
-
-      // Add data attributes for debugging
-      if (isDevelopment() && element) {
-        element.setAttribute(
-          'data-component-type',
-          component.type || 'unknown'
-        );
-      }
-
       container.appendChild(element);
       return element;
     });
-
-    // Add component info footer in development
-    if (isDevelopment()) {
-      addComponentInfoFooter(components.length);
-    }
 
     return {
       story,
@@ -164,16 +135,16 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Add navigation header for easier browsing
+   * Add default navigation
    */
-  const addNavigationHeader = () => {
+  const addDefaultNavigation = () => {
     const nav = document.createElement('nav');
-    nav.className = 'showcase-nav';
+    nav.className = 'default-nav no-print';
     nav.innerHTML = `
       <div style="
-        background: #f8f9fa;
+        background: var(--color-bg-secondary, #f8f9fa);
         padding: 1rem;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid var(--color-border, #dee2e6);
         margin-bottom: 2rem;
       ">
         <div style="
@@ -183,11 +154,13 @@ export const createApp = (config = {}) => {
           justify-content: space-between;
           align-items: center;
         ">
-          <h3 style="margin: 0; color: #333;">Svarog-UI + Storyblok</h3>
+          <h3 style="margin: 0; color: var(--color-text, #333);">
+            Your Website
+          </h3>
           <div>
             <a href="/" style="margin: 0 0.5rem;">Home</a>
-            <a href="/component-showcase" style="margin: 0 0.5rem;">All Components</a>
-            <a href="/examples" style="margin: 0 0.5rem;">Examples</a>
+            <a href="/about" style="margin: 0 0.5rem;">About</a>
+            <a href="/contact" style="margin: 0 0.5rem;">Contact</a>
           </div>
         </div>
       </div>
@@ -196,83 +169,18 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Add component count footer
-   */
-  const addComponentInfoFooter = count => {
-    const footer = document.createElement('div');
-    footer.className = 'component-info-footer';
-    footer.innerHTML = `
-      <div style="
-        background: #f8f9fa;
-        padding: 1rem;
-        border-top: 1px solid #dee2e6;
-        margin-top: 3rem;
-        text-align: center;
-        color: #6c757d;
-        font-size: 0.875rem;
-      ">
-        <p style="margin: 0;">
-          ${count} components loaded from Storyblok | 
-          <a href="#" onclick="window.storyblok?.pingEditor()">Open Visual Editor</a> | 
-          <a href="#" onclick="window.location.reload()">Refresh</a>
-        </p>
-      </div>
-    `;
-    container.appendChild(footer);
-  };
-
-  /**
    * Enable Storyblok live preview
    */
   const enableStoryblokPreview = () => {
-    if (window.storyblok) {
-      window.storyblok.on(['input', 'published', 'change'], event => {
-        if (event.action === 'input') {
-          console.log('📝 Content updated in Storyblok, refreshing...');
-          refreshContent();
-        }
-      });
+    if (!window.storyblok) return;
 
-      window.storyblok.pingEditor();
-
-      if (isDevelopment()) {
-        console.log('🔄 Storyblok live preview enabled');
-
-        // Show preview indicator
-        showPreviewIndicator();
+    window.storyblok.on(['input', 'published', 'change'], event => {
+      if (event.action === 'input') {
+        refreshContent();
       }
-    } else {
-      console.warn('Storyblok bridge not found - live preview disabled');
-    }
-  };
+    });
 
-  /**
-   * Show live preview indicator
-   */
-  const showPreviewIndicator = () => {
-    const indicator = document.createElement('div');
-    indicator.className = 'storyblok-preview-indicator';
-    indicator.innerHTML = '🔄 Live Preview Active';
-    indicator.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: #00b3b0;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      z-index: 1000;
-      opacity: 0.9;
-    `;
-    document.body.appendChild(indicator);
-
-    // Fade out after 3 seconds
-    setTimeout(() => {
-      indicator.style.transition = 'opacity 0.3s';
-      indicator.style.opacity = '0';
-      setTimeout(() => indicator.remove(), 300);
-    }, 3000);
+    window.storyblok.pingEditor();
   };
 
   /**
@@ -280,17 +188,17 @@ export const createApp = (config = {}) => {
    */
   const refreshContent = async () => {
     try {
-      // Add visual feedback
+      // Visual feedback
       container.style.opacity = '0.7';
       container.style.transition = 'opacity 0.2s';
 
       // Destroy current story
-      if (currentStory && currentStory.destroy) {
+      if (currentStory?.destroy) {
         currentStory.destroy();
       }
 
       // Reload content
-      await loadShowcaseFromStoryblok();
+      await loadContent();
 
       // Restore opacity
       container.style.opacity = '1';
@@ -301,33 +209,22 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Set up routing for different stories
+   * Set up client-side routing
    */
   const setupRouter = () => {
     // Handle browser navigation
     window.addEventListener('popstate', () => {
-      loadShowcaseFromStoryblok();
+      loadContent();
     });
 
     // Handle link clicks
     document.addEventListener('click', event => {
-      const link = event.target.closest('a[href^="/"], a[href^="#"]');
+      const link = event.target.closest('a[href^="/"]');
       if (link && !link.hasAttribute('target')) {
+        event.preventDefault();
         const href = link.getAttribute('href');
-
-        if (href.startsWith('#')) {
-          // Handle anchor links
-          event.preventDefault();
-          const element = document.querySelector(href);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-          }
-        } else if (href.startsWith('/')) {
-          // Handle internal navigation
-          event.preventDefault();
-          window.history.pushState({}, '', href);
-          loadShowcaseFromStoryblok();
-        }
+        window.history.pushState({}, '', href);
+        loadContent();
       }
     });
   };
@@ -336,137 +233,82 @@ export const createApp = (config = {}) => {
    * Show loading state
    */
   const showLoadingState = () => {
-    container.innerHTML = `
-      <div class="app-loading">
-        <div class="loading-spinner"></div>
-        <p>Loading content from Storyblok...</p>
-      </div>
-    `;
+    const existing = container.querySelector('.app-loading');
+    if (!existing) {
+      container.innerHTML = `
+        <div class="app-loading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading content...</p>
+        </div>
+      `;
+    }
   };
 
   /**
    * Hide loading state
    */
   const hideLoadingState = () => {
-    const loadingElement = container.querySelector('.app-loading');
-    if (loadingElement) {
-      loadingElement.remove();
+    const loading = container.querySelector('.app-loading');
+    if (loading) {
+      loading.remove();
     }
   };
 
   /**
-   * Render error state
+   * Show error state
    */
-  const renderErrorState = error => {
+  const showErrorState = error => {
     container.innerHTML = `
       <div class="app-error">
-        <h1>❌ Error Loading Content</h1>
+        <h1>❌ Unable to Load Content</h1>
         <p>${error.message}</p>
-        <button onclick="window.location.reload()" class="retry-button">
+        <button onclick="window.location.reload()" class="button">
           Try Again
         </button>
-        ${
-          isDevelopment()
-            ? `
-          <details class="error-details">
-            <summary>Error Details</summary>
-            <pre>${error.stack}</pre>
-          </details>
-        `
-            : ''
-        }
       </div>
     `;
   };
 
   /**
-   * Render Storyblok setup guide
+   * Show setup guide for new users
    */
-  const renderStoryblokSetupGuide = () => {
+  const showSetupGuide = () => {
     container.innerHTML = `
       <div class="setup-guide">
-        <h1>🚀 Storyblok Setup Guide</h1>
-        <p>To display your component showcase, please set up Storyblok:</p>
+        <h1>🚀 Welcome to Svarog-UI + Storyblok</h1>
+        <p>Let's get your website up and running!</p>
         
-        <h2>1. Environment Configuration</h2>
-        <pre style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-# .env file
-VITE_STORYBLOK_TOKEN=your_preview_token_here
-VITE_STORYBLOK_VERSION=draft</pre>
-        
-        <h2>2. Create Stories in Storyblok</h2>
-        <p>Create these stories in your Storyblok space:</p>
-        <ul>
-          <li><strong>home</strong> - Main showcase page</li>
-          <li><strong>component-showcase</strong> - All components display</li>
-          <li><strong>examples</strong> - Usage examples</li>
-        </ul>
-        
-        <h2>3. Add Components to Your Story</h2>
-        <p>In the Visual Editor, add these component blocks:</p>
-        <div style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1rem;
-          margin: 1rem 0;
-        ">
-          ${getAvailableComponents()
-            .map(
-              comp => `
-            <div style="
-              background: #f8f9fa;
-              padding: 0.5rem;
-              border-radius: 4px;
-              font-size: 0.875rem;
-            ">
-              <strong>${comp}</strong>
-            </div>
-          `
-            )
-            .join('')}
+        <div style="text-align: left; max-width: 500px; margin: 2rem auto;">
+          <h3>Quick Setup:</h3>
+          <ol style="line-height: 2;">
+            <li>Add your Storyblok token to <code>.env</code></li>
+            <li>Create a story called "home" in Storyblok</li>
+            <li>Add some components (hero, text, cards)</li>
+            <li>Refresh this page</li>
+          </ol>
         </div>
         
-        <h2>4. Enable Preview URL</h2>
-        <p>In Storyblok Settings → Visual Editor:</p>
-        <ul>
-          <li>Set preview URL: <code>https://localhost:3000/</code></li>
-          <li>Enable HTTPS for real-time API</li>
-        </ul>
+        <div style="margin-top: 2rem;">
+          <button onclick="window.location.reload()" class="button">
+            Check Again
+          </button>
+          <a href="https://app.storyblok.com" target="_blank" class="button button-secondary" style="margin-left: 1rem;">
+            Open Storyblok
+          </a>
+        </div>
         
-        <button onclick="window.location.reload()" class="retry-button">
-          Retry After Setup
-        </button>
+        <p style="margin-top: 2rem; color: #666; font-size: 14px;">
+          Need help? Check the <a href="/docs" target="_blank">documentation</a>
+        </p>
       </div>
     `;
   };
 
   /**
-   * Get list of available components
+   * Get current theme
    */
-  const getAvailableComponents = () => {
-    return [
-      'hero_section',
-      'text_block',
-      'button',
-      'card',
-      'grid',
-      'section',
-      'image',
-      'header',
-      'footer',
-      'navigation',
-      'form',
-      'input',
-      'select',
-      'checkbox',
-      'blog_card',
-      'product_card',
-      'tabs',
-      'rating',
-      'price_display',
-      'contact_info',
-      'map',
-    ];
+  const getCurrentTheme = () => {
+    return document.body.className.match(/theme-(\w+)/)?.[1] || 'default';
   };
 
   /**
@@ -476,7 +318,7 @@ VITE_STORYBLOK_VERSION=draft</pre>
     return {
       ready: document.body.classList.contains('app-ready'),
       currentRoute,
-      currentTheme: 'default',
+      currentTheme: getCurrentTheme(),
       cacheStats: storyblok.getCacheStats(),
       storyLoaded: !!currentStory,
     };
@@ -488,19 +330,15 @@ VITE_STORYBLOK_VERSION=draft</pre>
   const navigateToRoute = async path => {
     currentRoute = path;
     window.history.pushState({}, '', path);
-    await loadShowcaseFromStoryblok();
+    await loadContent();
   };
 
   /**
-   * Destroy application and clean up
+   * Destroy application
    */
   const destroy = () => {
-    if (isDevelopment()) {
-      console.log('🔄 Destroying application...');
-    }
-
     // Destroy current story
-    if (currentStory && currentStory.destroy) {
+    if (currentStory?.destroy) {
       currentStory.destroy();
     }
 
@@ -509,18 +347,19 @@ VITE_STORYBLOK_VERSION=draft</pre>
 
     // Remove ready class
     document.body.classList.remove('app-ready');
-
-    if (isDevelopment()) {
-      console.log('✅ Application destroyed');
-    }
   };
 
+  // Public API
   return {
     init,
     navigateToRoute,
     getStatus,
     destroy,
-    // Expose for debugging in development
-    ...(isDevelopment() && { storyblok }),
+    // Development utilities
+    ...(isDevelopment() && {
+      storyblok,
+      refreshContent,
+      getCurrentTheme,
+    }),
   };
 };

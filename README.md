@@ -1,334 +1,224 @@
-# Svarog-UI + Storyblok Integration Example
+# Svarog-UI + Storyblok Integration Template
 
-A complete working example demonstrating seamless integration between the
+A production-ready template for building modern websites using
 [Svarog-UI Component Library](https://www.npmjs.com/package/svarog-ui) and
-[Storyblok CMS](https://www.storyblok.com/), featuring **live preview functionality** and real-time
-content editing.
-
-## 🎯 What This Example Shows
-
-- ✅ **Component Mapping** - Automatic mapping between Storyblok components and Svarog-UI
-- ✅ **Live Preview** - Real-time content updates in Storyblok Visual Editor
-- ✅ **Theme Switching** - Dynamic theme changes with Svarog-UI's theme system
-- ✅ **Error Handling** - Graceful fallbacks and helpful error messages
-- ✅ **Performance** - Optimized rendering with caching and DOM efficiency
-- ✅ **Production Ready** - Express server setup for Railway deployment
+[Storyblok CMS](https://www.storyblok.com/). Create beautiful, maintainable websites in minutes with
+live preview functionality and seamless component integration.
 
 ## 🚀 Quick Start
 
-### 1. Clone and Install
+Get your website running in under 5 minutes:
 
 ```bash
-git clone <repository-url>
-cd svarog-storyblok-integration
+# 1. Clone the template
+git clone <template-repo> my-website
+cd my-website
+
+# 2. Run the setup wizard
 npm install
-```
-
-### 2. Automatic Setup
-
-```bash
 npm run setup
-```
 
-This creates your `.env` file and checks your environment.
-
-### 3. Configure Storyblok
-
-1. **Create a Storyblok space** at [storyblok.com](https://app.storyblok.com)
-2. **Get your preview token** from Settings > Access Tokens
-3. **Add it to `.env`**:
-   ```env
-   VITE_STORYBLOK_TOKEN=your_preview_token_here
-   VITE_STORYBLOK_VERSION=draft
-   ```
-
-### 4. Set Up Components in Storyblok
-
-Follow the **[Storyblok Setup Guide](#storyblok-setup)** below to create the required component
-types.
-
-### 5. Start Development
-
-```bash
+# 3. Start development
 npm run dev
 ```
 
-Your example will open at `http://localhost:3000` with:
+The setup wizard will guide you through:
 
-- 🎨 Theme switcher (top-right)
-- 🔄 Live preview indicator
-- 📝 Example content or setup instructions
+- 🔧 Project configuration
+- 🔑 Storyblok token setup
+- 🎨 Theme selection
+- ✨ Feature selection
+- 🚀 Deployment configuration
 
-## 🎨 Live Preview in Action
+## 🎯 Features
 
-1. **Open Storyblok Visual Editor** for your 'home' story
-2. **Edit content** - Change text, switch themes, add components
-3. **See instant updates** in your browser without refresh!
+- **🧩 40+ Pre-built Components** - Hero sections, cards, forms, navigation, and more
+- **🎨 Multiple Themes** - Default, Cabalou (modern purple), Muchandy (warm tones)
+- **👁️ Live Preview** - Real-time content updates in Storyblok Visual Editor
+- **📱 Fully Responsive** - Mobile-first design that works on all devices
+- **⚡ Performance Optimized** - Lazy loading, code splitting, and caching
+- **🔧 Developer Friendly** - Clean code, comprehensive docs, and helpful tooling
+- **🚢 Production Ready** - SEO, security headers, and deployment configs included
 
-![Live Preview Demo](docs/live-preview-demo.gif)
+## 📋 Prerequisites
 
-## 🧱 Component Architecture
+- Node.js 18+ and npm 8+
+- Storyblok account (free tier works)
+- Basic knowledge of JavaScript and HTML
 
-### Available Components
-
-The example includes these Storyblok → Svarog-UI mappings:
-
-| Storyblok Component | Svarog-UI Component | Description                     |
-| ------------------- | ------------------- | ------------------------------- |
-| `hero_section`      | `Hero`              | Page headers with CTA buttons   |
-| `text_block`        | `Typography`        | Rich text content with variants |
-| `button`            | `Button`            | Interactive buttons with themes |
-| `card`              | `Card`              | Content cards with images/links |
-| `grid`              | `Grid`              | Responsive grid layouts         |
-| `section`           | `Section`           | Content sections with variants  |
-| `header`            | `Header`            | Site header with navigation     |
-| `footer`            | `Footer`            | Site footer with links          |
-| `navigation`        | `Navigation`        | Navigation menus                |
-
-### Component Factory Pattern
-
-Each component uses Svarog-UI's factory pattern:
-
-```javascript
-// CMS data gets transformed into Svarog-UI props
-const hero = Hero({
-  title: 'Welcome to Svarog-UI',
-  subtitle: 'Integrated with Storyblok',
-  theme: 'cabalou',
-  ctaButton: {
-    text: 'Get Started',
-    href: '#features',
-    variant: 'primary',
-  },
-});
-
-// Automatic style injection - no CSS imports needed!
-document.body.appendChild(hero.getElement());
-```
-
-## 📁 Project Structure
+## 🛠️ Project Structure
 
 ```
-svarog-storyblok-integration/
+svarog-storyblok-template/
+├── .storyblok/              # Storyblok component templates
+│   ├── components.json      # Import-ready component definitions
+│   └── stories/            # Example story templates
 ├── src/
-│   ├── app.js                    # Main application with live preview
-│   ├── index.js                  # Entry point
-│   ├── index.html                # HTML template with Storyblok bridge
-│   ├── integration/              # Core integration layer
-│   │   ├── componentMapper.js    # Maps Storyblok → Svarog-UI
-│   │   └── storyblokClient.js    # Enhanced Storyblok client
-│   ├── config/
-│   │   ├── components.js         # Component registry & schemas
-│   │   └── environment.js        # Environment configuration
-│   ├── utils/                    # Utility functions
-│   ├── styles/                   # Integration-specific styles
-│   └── types/                    # JSDoc type definitions
-├── server/
-│   └── index.js                  # Express server for production
-├── scripts/
-│   └── setup-example.js          # Setup helper script
-├── tests/                        # Integration tests
-├── docs/                         # Documentation
-└── .env.example                  # Environment template
+│   ├── app.js              # Main application logic
+│   ├── components/         # Component extensions
+│   │   ├── custom/        # Your custom components
+│   │   └── examples/      # Example implementations
+│   ├── features/          # Feature modules (blog, e-commerce, etc.)
+│   ├── integration/       # Storyblok integration layer
+│   ├── config/           # Configuration files
+│   ├── theme/            # Theme customizations
+│   └── utils/            # Utility functions
+├── docs/                  # Documentation
+├── scripts/              # Build and setup scripts
+└── tests/                # Integration tests
 ```
 
-## 🔧 Development Features
+## 🎨 Available Components
 
-### Theme System Integration
+### Layout Components
 
-```javascript
-import { switchTheme, getCurrentTheme } from 'svarog-ui';
+- **Grid** - Responsive grid system (1-12 columns)
+- **Section** - Content sections with padding and themes
+- **Page** - Page wrapper with metadata
 
-// Programmatic theme switching
-switchTheme('cabalou');
+### Content Components
 
-// Theme persistence
-localStorage.setItem('svarog-theme', 'muchandy');
+- **Hero Section** - Eye-catching headers with CTA
+- **Text Block** - Rich text with formatting
+- **Card** - Feature/content cards with variants
+- **Image** - Responsive images with lazy loading
 
-// Available themes: 'default', 'cabalou', 'muchandy'
+### Navigation
+
+- **Header** - Site header with logo and nav
+- **Navigation** - Horizontal/vertical menus
+- **Footer** - Site footer with links
+
+### Forms
+
+- **Form** - Form wrapper with validation
+- **Input** - Text, email, number inputs
+- **Select** - Dropdown selections
+- **Button** - Interactive buttons
+
+### UI Elements
+
+- **Tabs** - Tabbed content
+- **Rating** - Star ratings
+- **Price Display** - Product pricing
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Storyblok Configuration
+VITE_STORYBLOK_TOKEN=your_preview_token_here
+VITE_STORYBLOK_VERSION=draft
+VITE_STORYBLOK_SPACE_ID=your_space_id
+VITE_STORYBLOK_REGION=eu
+
+# Application Settings
+NODE_ENV=development
+VITE_DEFAULT_THEME=default
+PORT=3000
 ```
 
-### Live Preview Events
+### Storyblok Setup
 
-```javascript
-// Listen for Storyblok changes
-window.storyblok.on(['input', 'published', 'change'], event => {
-  if (event.action === 'input') {
-    // Content updated in editor
-    refreshContent();
-  }
-});
-```
+1. **Create a Storyblok Space**
 
-### Error Handling
+   ```
+   1. Go to https://app.storyblok.com
+   2. Create a new space
+   3. Get your preview token from Settings → Access Tokens
+   ```
 
-- **Graceful fallbacks** for missing components
-- **Helpful error messages** with setup instructions
-- **Development debugging** with detailed console logs
-- **Component validation** with clear error reporting
-
-## 🎯 Storyblok Setup
-
-<details>
-<summary><strong>📋 Complete Storyblok Configuration Guide</strong></summary>
-
-### Step 1: Create Component Types
-
-In your Storyblok space, go to **Components > Block Library** and create:
-
-#### Hero Section (`hero_section`)
-
-```json
-{
-  "title": { "type": "text", "required": true },
-  "subtitle": { "type": "text" },
-  "background_image": { "type": "asset", "filetypes": ["images"] },
-  "cta_button": {
-    "type": "bloks",
-    "restrict_type": true,
-    "component_whitelist": ["button"],
-    "maximum": 1
-  },
-  "theme": {
-    "type": "option",
-    "options": [
-      { "name": "Default", "value": "default" },
-      { "name": "Cabalou", "value": "cabalou" },
-      { "name": "Muchandy", "value": "muchandy" }
-    ]
-  }
-}
-```
-
-#### Text Block (`text_block`)
-
-```json
-{
-  "content": { "type": "richtext", "required": true },
-  "variant": {
-    "type": "option",
-    "options": [
-      { "name": "Body", "value": "body" },
-      { "name": "Heading", "value": "heading" },
-      { "name": "Caption", "value": "caption" }
-    ]
-  },
-  "alignment": {
-    "type": "option",
-    "options": [
-      { "name": "Left", "value": "left" },
-      { "name": "Center", "value": "center" },
-      { "name": "Right", "value": "right" }
-    ]
-  }
-}
-```
-
-#### Button (`button`)
-
-```json
-{
-  "text": { "type": "text", "required": true },
-  "url": { "type": "text", "required": true },
-  "variant": {
-    "type": "option",
-    "options": [
-      { "name": "Primary", "value": "primary" },
-      { "name": "Secondary", "value": "secondary" },
-      { "name": "Outline", "value": "outline" }
-    ]
-  },
-  "size": {
-    "type": "option",
-    "options": [
-      { "name": "Small", "value": "small" },
-      { "name": "Medium", "value": "medium" },
-      { "name": "Large", "value": "large" }
-    ]
-  }
-}
-```
-
-#### Card (`card`)
-
-```json
-{
-  "title": { "type": "text", "required": true },
-  "content": { "type": "textarea" },
-  "image": { "type": "asset", "filetypes": ["images"] },
-  "link": {
-    "type": "bloks",
-    "component_whitelist": ["button"],
-    "maximum": 1
-  },
-  "variant": {
-    "type": "option",
-    "options": [
-      { "name": "Default", "value": "default" },
-      { "name": "Elevated", "value": "elevated" },
-      { "name": "Outlined", "value": "outlined" }
-    ]
-  }
-}
-```
-
-### Step 2: Create Page Template
-
-Create a **Content Type** called `page`:
-
-```json
-{
-  "title": { "type": "text", "required": true },
-  "description": { "type": "textarea" },
-  "body": { "type": "bloks", "required": true }
-}
-```
-
-### Step 3: Create Example Story
-
-1. Create a story called `home`
-2. Use the `page` content type
-3. Add example content with the components above
-
-### Step 4: Enable Live Preview
-
-1. Go to **Settings > Visual Editor**
-2. Set preview URL: `http://localhost:3000/`
-3. Enable "Use 'https' for the real-time API"
-4. Save settings
-
-</details>
-
-## 🌐 Production Deployment
-
-### Railway Deployment
-
-1. **Build the project**:
+2. **Import Components**
 
    ```bash
-   npm run build
+   npm run import:storyblok
    ```
 
-2. **Set environment variables** in Railway:
+3. **Create Your First Story**
+   - Name: "Home"
+   - Slug: "home"
+   - Content type: "Page"
 
-   ```env
-   NODE_ENV=production
-   VITE_STORYBLOK_TOKEN=your_public_token
-   VITE_STORYBLOK_VERSION=published
-   ```
+## 🏗️ Development
 
-3. **Deploy**:
-   ```bash
-   railway up
-   ```
+### Creating Custom Components
 
-### Server Features
+Use the component generator:
 
-- ✅ **Static file serving** from `dist/`
-- ✅ **Client-side routing** support
-- ✅ **Health check** endpoint: `/health`
-- ✅ **Cache invalidation** webhook: `/api/invalidate-cache`
-- ✅ **SEO-friendly** robots.txt and sitemap
+```bash
+npm run create:component MyComponent
+```
+
+This creates:
+
+- Component file with Svarog-UI integration
+- Test file with basic tests
+- Storyblok component definition
+- Automatic registration
+
+### Manual Component Creation
+
+```javascript
+// src/components/custom/MyComponent.js
+export const MyComponent = props => {
+  const element = document.createElement('div');
+  element.className = 'my-component';
+  element.innerHTML = `<h2>${props.title}</h2>`;
+
+  return {
+    getElement: () => element,
+    update: newProps => {
+      element.querySelector('h2').textContent = newProps.title;
+    },
+    destroy: () => {
+      element.remove();
+    },
+  };
+};
+```
+
+### Adding Features
+
+The template supports modular features:
+
+- **Blog** - Full blogging system
+- **E-commerce** - Product listings and cart
+- **Multi-language** - i18n support
+- **Analytics** - Google Analytics integration
+- **Contact Forms** - Form handling
+
+Enable features during setup or add them manually in `src/features/`.
+
+## 🎨 Theming
+
+### Using Built-in Themes
+
+```javascript
+// Change theme programmatically
+import { switchTheme } from 'svarog-ui';
+
+switchTheme('cabalou'); // or 'default', 'muchandy'
+```
+
+### Creating Custom Themes
+
+```javascript
+// src/theme/custom-theme.js
+export const customTheme = {
+  name: 'custom',
+  colors: {
+    primary: '#007bff',
+    secondary: '#6c757d',
+    // ... more colors
+  },
+  apply: () => {
+    // Apply CSS variables
+  },
+};
+```
 
 ## 🧪 Testing
 
@@ -336,92 +226,129 @@ Create a **Content Type** called `page`:
 # Run all tests
 npm test
 
-# Watch mode for development
+# Watch mode
 npm run test:watch
-
-# Integration tests only
-npm run test:integration
 
 # Coverage report
 npm run test:coverage
 ```
 
-Tests cover:
-
-- Component mapping functionality
-- Storyblok client integration
-- Error handling scenarios
-- Theme switching
-- Live preview features
-
-## 🛠️ Available Scripts
+## 📦 Building for Production
 
 ```bash
-npm run dev          # Start development server with live preview
-npm run dev:debug    # Development with extra debugging
-npm run example      # Alias for npm run dev
-npm run setup        # Initial project setup
-npm run build        # Production build
-npm run start        # Start production server
-npm test             # Run tests
-npm run lint         # Code linting
-npm run format       # Code formatting
+# Build the project
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-## 🔍 Debugging
+The build process:
 
-### Development Tools
+- Optimizes bundle size
+- Minifies code
+- Generates source maps
+- Copies static assets
 
-- **Browser Console** - Detailed logging of component creation and updates
-- **Live Preview Indicator** - Shows when Storyblok bridge is active
-- **Theme Switcher** - Test theme changes in real-time
-- **Error Boundaries** - Helpful error messages with setup guidance
+## 🚀 Deployment
+
+### Railway (Recommended)
+
+```bash
+# Deploy to Railway
+railway up
+```
+
+### Vercel
+
+```bash
+# Deploy to Vercel
+vercel --prod
+```
+
+### Netlify
+
+```bash
+# Deploy to Netlify
+netlify deploy --prod
+```
+
+### Environment Variables for Production
+
+```env
+NODE_ENV=production
+VITE_STORYBLOK_TOKEN=your_public_token
+VITE_STORYBLOK_VERSION=published
+```
+
+## 📚 Documentation
+
+- **[Customization Guide](docs/CUSTOMIZATION.md)** - Add components and features
+- **[Component Reference](docs/COMPONENTS.md)** - All available components
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment
+- **[API Reference](docs/API.md)** - Integration APIs
+
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-**Live Preview Not Working?**
+**Components not rendering?**
 
-- Check Storyblok token in `.env`
-- Verify preview URL in Storyblok settings
-- Look for Storyblok bridge errors in console
+- Check component is registered in `src/config/components.js`
+- Verify Storyblok component names match exactly
+- Look for console errors
 
-**Components Not Rendering?**
+**Live preview not working?**
 
-- Verify component names match your Storyblok setup
-- Check browser console for mapping errors
-- Ensure all required props are provided
+- Ensure HTTPS is enabled in dev server
+- Check Storyblok Visual Editor settings
+- Verify preview token permissions
 
-**Theme Not Switching?**
+**Build errors?**
 
-- Check if Svarog-UI themes are properly loaded
-- Verify theme names in component props
-- Look for CSS variable updates in DevTools
+- Clear `node_modules` and reinstall
+- Check Node.js version (18+)
+- Verify all environment variables
+
+### Debug Mode
+
+Enable detailed logging:
+
+```javascript
+// In development
+localStorage.setItem('debug', 'true');
+```
 
 ## 🤝 Contributing
 
-This example follows the same standards as the main Svarog-UI library:
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Philosophy
 
 1. **Concise Code** - Write the shortest code that works correctly
-2. **Factory Functions** - Use Svarog-UI's component pattern
-3. **Error Handling** - Provide helpful error messages
-4. **Documentation** - Update both code comments and README
-5. **Testing** - Add tests for new functionality
+2. **Component-Based** - Everything is a reusable component
+3. **Performance First** - Optimize for speed and efficiency
+4. **Developer Experience** - Make it easy and enjoyable
 
 ## 📄 License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Svarog-UI](https://github.com/your-org/svarog-ui) - The component library
+- [Storyblok](https://www.storyblok.com) - The headless CMS
+- All our contributors and users
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/svarog-storyblok-integration/issues)
-- **Discussions**:
-  [GitHub Discussions](https://github.com/your-org/svarog-storyblok-integration/discussions)
-- **Storyblok Docs**: [storyblok.com/docs](https://www.storyblok.com/docs)
-- **Svarog-UI Docs**: Check your svarog-ui library documentation
+- 📖 [Documentation](https://your-docs-site.com)
+- 💬 [Discord Community](https://discord.gg/your-invite)
+- 🐛 [Issue Tracker](https://github.com/your-org/template/issues)
+- 📧 [Email Support](mailto:support@your-domain.com)
 
 ---
 
-**Built with ❤️ using Svarog-UI + Storyblok**
+Built with ❤️ using Svarog-UI + Storyblok
 
-_This example demonstrates the power of combining a modern component library with a headless CMS for
-rapid, maintainable web development._
+**Ready to build something amazing? Let's go! 🚀**

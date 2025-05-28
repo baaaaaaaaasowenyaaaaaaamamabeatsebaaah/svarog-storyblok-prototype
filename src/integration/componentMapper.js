@@ -1,4 +1,4 @@
-// File: src/integration/componentMapper.js
+// src/integration/componentMapper.js
 /**
  * Enhanced component mapper with better error handling and logging
  * Maps Storyblok components to Svarog-UI components with validation

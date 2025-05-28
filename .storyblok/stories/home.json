@@ -1,0 +1,66 @@
+{
+  "story": {
+    "name": "Home",
+    "slug": "home",
+    "is_startpage": true,
+    "content": {
+      "component": "page",
+      "body": [
+        {
+          "component": "hero_section",
+          "_uid": "hero-1",
+          "title": "Welcome to Your New Website",
+          "subtitle": "Built with Svarog-UI and Storyblok",
+          "theme": "default",
+          "cta_button": [
+            {
+              "component": "button",
+              "_uid": "btn-1",
+              "text": "Get Started",
+              "url": "#features",
+              "variant": "primary",
+              "size": "large"
+            }
+          ]
+        },
+        {
+          "component": "section",
+          "_uid": "section-1",
+          "variant": "default",
+          "padding": "large",
+          "children": [
+            {
+              "component": "grid",
+              "_uid": "grid-1",
+              "columns": 12,
+              "gap": "medium",
+              "children": [
+                {
+                  "component": "card",
+                  "_uid": "card-1",
+                  "title": "Feature One",
+                  "content": "Describe your first key feature here.",
+                  "variant": "elevated"
+                },
+                {
+                  "component": "card",
+                  "_uid": "card-2",
+                  "title": "Feature Two",
+                  "content": "Describe your second key feature here.",
+                  "variant": "elevated"
+                },
+                {
+                  "component": "card",
+                  "_uid": "card-3",
+                  "title": "Feature Three",
+                  "content": "Describe your third key feature here.",
+                  "variant": "elevated"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

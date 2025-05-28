@@ -1,0 +1,451 @@
+{
+  "stories": [
+    {
+      "name": "Home",
+      "slug": "home",
+      "is_startpage": true,
+      "content": {
+        "component": "page",
+        "meta_title": "Svarog-UI + Storyblok Demo",
+        "meta_description": "A complete demo showcasing all components",
+        "body": [
+          {
+            "component": "header",
+            "_uid": "header-main",
+            "logo": {
+              "filename": "https://a.storyblok.com/f/demo/logo.svg",
+              "alt": "Demo Site"
+            },
+            "navigation": [
+              {
+                "component": "navigation",
+                "_uid": "nav-main",
+                "items": [
+                  { "text": "Home", "url": "/", "active": true },
+                  { "text": "Components", "url": "/components" },
+                  { "text": "Features", "url": "/features" },
+                  { "text": "About", "url": "/about" },
+                  { "text": "Contact", "url": "/contact" }
+                ]
+              }
+            ]
+          },
+          {
+            "component": "hero_section",
+            "_uid": "hero-home",
+            "title": "Build Amazing Websites",
+            "subtitle": "Combine the power of Svarog-UI components with Storyblok CMS for the perfect development experience",
+            "background_image": {
+              "filename": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80",
+              "alt": "Hero background"
+            },
+            "theme": "default",
+            "cta_button": [
+              {
+                "component": "button",
+                "_uid": "btn-hero-1",
+                "text": "Get Started",
+                "url": "#get-started",
+                "variant": "primary",
+                "size": "large"
+              }
+            ]
+          },
+          {
+            "component": "section",
+            "_uid": "section-features",
+            "variant": "default",
+            "padding": "large",
+            "children": [
+              {
+                "component": "text_block",
+                "_uid": "text-features-intro",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "heading",
+                      "attrs": { "level": 2 },
+                      "content": [
+                        { "type": "text", "text": "Why Choose This Stack?" }
+                      ]
+                    },
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Get the best of both worlds - a powerful component library and a flexible headless CMS."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "alignment": "center"
+              },
+              {
+                "component": "grid",
+                "_uid": "grid-features",
+                "columns": 12,
+                "gap": "medium",
+                "children": [
+                  {
+                    "component": "card",
+                    "_uid": "card-feature-1",
+                    "title": "40+ Components",
+                    "content": "Pre-built, customizable components for every need - from heroes to forms to specialized widgets.",
+                    "variant": "elevated",
+                    "image": {
+                      "filename": "https://a.storyblok.com/f/demo/components-icon.svg"
+                    }
+                  },
+                  {
+                    "component": "card",
+                    "_uid": "card-feature-2",
+                    "title": "Live Preview",
+                    "content": "See your changes instantly with Storyblok's Visual Editor. No more guessing how content will look.",
+                    "variant": "elevated",
+                    "image": {
+                      "filename": "https://a.storyblok.com/f/demo/preview-icon.svg"
+                    }
+                  },
+                  {
+                    "component": "card",
+                    "_uid": "card-feature-3",
+                    "title": "Production Ready",
+                    "content": "Optimized performance, SEO-friendly, accessible, and deployment configurations included.",
+                    "variant": "elevated",
+                    "image": {
+                      "filename": "https://a.storyblok.com/f/demo/production-icon.svg"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "component": "section",
+            "_uid": "section-demo-components",
+            "variant": "primary",
+            "padding": "large",
+            "children": [
+              {
+                "component": "text_block",
+                "_uid": "text-components-title",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "heading",
+                      "attrs": { "level": 2 },
+                      "content": [
+                        { "type": "text", "text": "Component Showcase" }
+                      ]
+                    }
+                  ]
+                },
+                "alignment": "center"
+              },
+              {
+                "component": "tabs",
+                "_uid": "tabs-components",
+                "tabs": [
+                  {
+                    "title": "Buttons",
+                    "content": {
+                      "component": "grid",
+                      "_uid": "grid-buttons",
+                      "columns": 12,
+                      "gap": "small",
+                      "children": [
+                        {
+                          "component": "button",
+                          "_uid": "btn-demo-1",
+                          "text": "Primary Button",
+                          "variant": "primary"
+                        },
+                        {
+                          "component": "button",
+                          "_uid": "btn-demo-2",
+                          "text": "Secondary Button",
+                          "variant": "secondary"
+                        },
+                        {
+                          "component": "button",
+                          "_uid": "btn-demo-3",
+                          "text": "Outline Button",
+                          "variant": "outline"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "title": "Typography",
+                    "content": {
+                      "component": "text_block",
+                      "_uid": "text-typography-demo",
+                      "content": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "heading",
+                            "attrs": { "level": 1 },
+                            "content": [{ "type": "text", "text": "Heading 1" }]
+                          },
+                          {
+                            "type": "heading",
+                            "attrs": { "level": 2 },
+                            "content": [{ "type": "text", "text": "Heading 2" }]
+                          },
+                          {
+                            "type": "paragraph",
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "This is a paragraph with "
+                              },
+                              {
+                                "type": "text",
+                                "marks": [{ "type": "bold" }],
+                                "text": "bold text"
+                              },
+                              { "type": "text", "text": " and " },
+                              {
+                                "type": "text",
+                                "marks": [{ "type": "italic" }],
+                                "text": "italic text"
+                              },
+                              { "type": "text", "text": "." }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "title": "Forms",
+                    "content": {
+                      "component": "form",
+                      "_uid": "form-demo",
+                      "children": [
+                        {
+                          "component": "input",
+                          "_uid": "input-name",
+                          "type": "text",
+                          "name": "name",
+                          "label": "Your Name",
+                          "placeholder": "John Doe",
+                          "required": true
+                        },
+                        {
+                          "component": "input",
+                          "_uid": "input-email",
+                          "type": "email",
+                          "name": "email",
+                          "label": "Email Address",
+                          "placeholder": "john@example.com",
+                          "required": true
+                        },
+                        {
+                          "component": "select",
+                          "_uid": "select-topic",
+                          "name": "topic",
+                          "label": "Topic",
+                          "options": [
+                            { "value": "", "label": "Select a topic" },
+                            { "value": "general", "label": "General Inquiry" },
+                            { "value": "support", "label": "Support" },
+                            { "value": "sales", "label": "Sales" }
+                          ]
+                        },
+                        {
+                          "component": "button",
+                          "_uid": "btn-submit",
+                          "text": "Submit",
+                          "variant": "primary",
+                          "type": "submit"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "component": "section",
+            "_uid": "section-themes",
+            "padding": "large",
+            "children": [
+              {
+                "component": "text_block",
+                "_uid": "text-themes-title",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "heading",
+                      "attrs": { "level": 2 },
+                      "content": [{ "type": "text", "text": "Multiple Themes" }]
+                    },
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Switch between beautiful pre-designed themes or create your own."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "alignment": "center"
+              },
+              {
+                "component": "grid",
+                "_uid": "grid-themes",
+                "columns": 12,
+                "gap": "medium",
+                "children": [
+                  {
+                    "component": "hero_section",
+                    "_uid": "hero-theme-default",
+                    "title": "Default Theme",
+                    "subtitle": "Clean and professional",
+                    "theme": "default"
+                  },
+                  {
+                    "component": "hero_section",
+                    "_uid": "hero-theme-cabalou",
+                    "title": "Cabalou Theme",
+                    "subtitle": "Modern and vibrant",
+                    "theme": "cabalou"
+                  },
+                  {
+                    "component": "hero_section",
+                    "_uid": "hero-theme-muchandy",
+                    "title": "Muchandy Theme",
+                    "subtitle": "Warm and friendly",
+                    "theme": "muchandy"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "component": "section",
+            "_uid": "section-cta",
+            "variant": "secondary",
+            "padding": "large",
+            "children": [
+              {
+                "component": "text_block",
+                "_uid": "text-cta",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "heading",
+                      "attrs": { "level": 2 },
+                      "content": [{ "type": "text", "text": "Ready to Build?" }]
+                    },
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Get started with our template and create your website in minutes."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "alignment": "center"
+              },
+              {
+                "component": "grid",
+                "_uid": "grid-cta-buttons",
+                "columns": 12,
+                "gap": "small",
+                "children": [
+                  {
+                    "component": "button",
+                    "_uid": "btn-get-started",
+                    "text": "Get Started",
+                    "url": "https://github.com/your-org/template",
+                    "variant": "primary",
+                    "size": "large"
+                  },
+                  {
+                    "component": "button",
+                    "_uid": "btn-view-docs",
+                    "text": "View Documentation",
+                    "url": "/docs",
+                    "variant": "outline",
+                    "size": "large"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "component": "footer",
+            "_uid": "footer-main",
+            "copyright": "© 2024 Demo Site. Built with Svarog-UI + Storyblok",
+            "links": [
+              { "text": "Privacy Policy", "url": "/privacy" },
+              { "text": "Terms of Service", "url": "/terms" },
+              { "text": "GitHub", "url": "https://github.com/your-org" }
+            ],
+            "social": [
+              { "platform": "twitter", "url": "https://twitter.com/yourorg" },
+              { "platform": "github", "url": "https://github.com/your-org" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Components",
+      "slug": "components",
+      "content": {
+        "component": "page",
+        "meta_title": "Components - Svarog-UI Demo",
+        "body": [
+          {
+            "component": "hero_section",
+            "_uid": "hero-components",
+            "title": "All Components",
+            "subtitle": "Explore our complete component library",
+            "theme": "cabalou"
+          },
+          {
+            "component": "section",
+            "_uid": "section-all-components",
+            "padding": "large",
+            "children": [
+              {
+                "component": "text_block",
+                "_uid": "text-components-intro",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Browse through all available components organized by category. Each component is fully customizable and ready to use."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
