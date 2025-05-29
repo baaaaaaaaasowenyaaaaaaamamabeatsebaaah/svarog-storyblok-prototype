@@ -1,11 +1,13 @@
 // src/app.js
 /**
  * Main application for Svarog-UI + Storyblok integration
- * Handles routing, content loading, and component rendering
+ * Uses Svarog-UI components with muchandy theme
  */
 
 import { createStoryblokClient } from './integration/storyblokClient.js';
 import { isDevelopment } from './utils/environment.js';
+// Import Svarog-UI components for UI states
+import { Typography, Button, Card, Section, Header } from 'svarog-ui';
 
 /**
  * Creates the main application
@@ -45,14 +47,10 @@ export const createApp = (config = {}) => {
       // Load initial content
       await loadContent();
 
-      // Mark app as ready
-      document.body.classList.add('app-ready');
-
       // Dispatch ready event
       window.dispatchEvent(
         new CustomEvent('appReady', {
           detail: {
-            theme: getCurrentTheme(),
             route: currentRoute,
           },
         })
@@ -76,7 +74,7 @@ export const createApp = (config = {}) => {
       // Load story from Storyblok
       const story = await storyblok.getStoryWithComponents(slug);
 
-      // Render story
+      // Render story using Svarog-UI
       currentStory = await renderStory(story);
 
       hideLoadingState();
@@ -96,7 +94,7 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Render story to container
+   * Render story using Svarog-UI components
    */
   const renderStory = async story => {
     // Clear existing content
@@ -108,12 +106,12 @@ export const createApp = (config = {}) => {
         ? story.renderedComponents
         : await storyblok.createComponentsFromStory(story);
 
-    // Add navigation if needed
+    // Add navigation if needed using Svarog-UI
     if (!container.querySelector('header')) {
       addDefaultNavigation();
     }
 
-    // Render components
+    // Render Svarog-UI components
     const elements = components.map(component => {
       const element = component.getElement();
       container.appendChild(element);
@@ -135,37 +133,46 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Add default navigation
+   * Add default navigation using Svarog-UI Header component
    */
   const addDefaultNavigation = () => {
-    const nav = document.createElement('nav');
-    nav.className = 'default-nav no-print';
-    nav.innerHTML = `
-      <div style="
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: 1rem;
-        border-bottom: 1px solid var(--color-border, #dee2e6);
-        margin-bottom: 2rem;
-      ">
-        <div style="
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        ">
-          <h3 style="margin: 0; color: var(--color-text, #333);">
-            Your Website
-          </h3>
-          <div>
-            <a href="/" style="margin: 0 0.5rem;">Home</a>
-            <a href="/about" style="margin: 0 0.5rem;">About</a>
-            <a href="/contact" style="margin: 0 0.5rem;">Contact</a>
-          </div>
+    try {
+      // Create navigation using Svarog-UI Header component
+      const headerComponent = Header({
+        logo: {
+          alt: 'Website Logo',
+          href: '/',
+        },
+        navigation: [
+          { text: 'Home', href: '/', active: currentRoute === '/' },
+          { text: 'About', href: '/about', active: currentRoute === '/about' },
+          {
+            text: 'Contact',
+            href: '/contact',
+            active: currentRoute === '/contact',
+          },
+        ],
+      });
+
+      // Insert at beginning of container
+      const headerElement = headerComponent.getElement();
+      container.insertBefore(headerElement, container.firstChild);
+    } catch (error) {
+      console.warn(
+        'Failed to create Svarog-UI header, using minimal fallback:',
+        error
+      );
+      // Minimal fallback without custom styling
+      const nav = document.createElement('nav');
+      nav.innerHTML = `
+        <div>
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
         </div>
-      </div>
-    `;
-    container.insertBefore(nav, container.firstChild);
+      `;
+      container.insertBefore(nav, container.firstChild);
+    }
   };
 
   /**
@@ -188,10 +195,6 @@ export const createApp = (config = {}) => {
    */
   const refreshContent = async () => {
     try {
-      // Visual feedback
-      container.style.opacity = '0.7';
-      container.style.transition = 'opacity 0.2s';
-
       // Destroy current story
       if (currentStory?.destroy) {
         currentStory.destroy();
@@ -199,12 +202,8 @@ export const createApp = (config = {}) => {
 
       // Reload content
       await loadContent();
-
-      // Restore opacity
-      container.style.opacity = '1';
     } catch (error) {
       console.error('Failed to refresh content:', error);
-      container.style.opacity = '1';
     }
   };
 
@@ -230,17 +229,23 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Show loading state
+   * Show loading state using Svarog-UI components
    */
   const showLoadingState = () => {
-    const existing = container.querySelector('.app-loading');
-    if (!existing) {
-      container.innerHTML = `
-        <div class="app-loading">
-          <div class="loading-spinner"></div>
-          <p class="loading-text">Loading content...</p>
-        </div>
-      `;
+    try {
+      // Use Svarog-UI Card and Typography for loading
+      const loadingCard = Card({
+        children: 'Loading content...',
+        variant: 'default',
+      });
+
+      // Clear container and show loading
+      container.innerHTML = '';
+      container.appendChild(loadingCard.getElement());
+    } catch (error) {
+      console.warn('Failed to create Svarog-UI loading state:', error);
+      // Minimal fallback
+      container.innerHTML = '<div>Loading...</div>';
     }
   };
 
@@ -248,67 +253,100 @@ export const createApp = (config = {}) => {
    * Hide loading state
    */
   const hideLoadingState = () => {
-    const loading = container.querySelector('.app-loading');
-    if (loading) {
-      loading.remove();
+    // Loading will be replaced by actual content
+  };
+
+  /**
+   * Show error state using Svarog-UI components
+   */
+  const showErrorState = error => {
+    try {
+      // Create error display using Svarog-UI components
+      const errorSection = Section({
+        children: [
+          Typography({
+            children: '❌ Unable to Load Content',
+            variant: 'heading',
+          }),
+          Typography({
+            children:
+              error.message ||
+              'An error occurred while loading the application.',
+            variant: 'body',
+          }),
+          Button({
+            text: 'Try Again',
+            onClick: () => window.location.reload(),
+            variant: 'primary',
+          }),
+        ],
+        variant: 'default',
+      });
+
+      container.innerHTML = '';
+      container.appendChild(errorSection.getElement());
+    } catch (svarogError) {
+      console.warn('Failed to create Svarog-UI error state:', svarogError);
+      // Minimal fallback without styling
+      container.innerHTML = `
+        <div>
+          <h1>Unable to Load Application</h1>
+          <p>${error.message}</p>
+          <button onclick="window.location.reload()">Try Again</button>
+        </div>
+      `;
     }
   };
 
   /**
-   * Show error state
-   */
-  const showErrorState = error => {
-    container.innerHTML = `
-      <div class="app-error">
-        <h1>❌ Unable to Load Content</h1>
-        <p>${error.message}</p>
-        <button onclick="window.location.reload()" class="button">
-          Try Again
-        </button>
-      </div>
-    `;
-  };
-
-  /**
-   * Show setup guide for new users
+   * Show setup guide using Svarog-UI components
    */
   const showSetupGuide = () => {
-    container.innerHTML = `
-      <div class="setup-guide">
-        <h1>🚀 Welcome to Svarog-UI + Storyblok</h1>
-        <p>Let's get your website up and running!</p>
-        
-        <div style="text-align: left; max-width: 500px; margin: 2rem auto;">
-          <h3>Quick Setup:</h3>
-          <ol style="line-height: 2;">
-            <li>Add your Storyblok token to <code>.env</code></li>
-            <li>Create a story called "home" in Storyblok</li>
-            <li>Add some components (hero, text, cards)</li>
-            <li>Refresh this page</li>
-          </ol>
-        </div>
-        
-        <div style="margin-top: 2rem;">
-          <button onclick="window.location.reload()" class="button">
-            Check Again
-          </button>
-          <a href="https://app.storyblok.com" target="_blank" class="button button-secondary" style="margin-left: 1rem;">
-            Open Storyblok
-          </a>
-        </div>
-        
-        <p style="margin-top: 2rem; color: #666; font-size: 14px;">
-          Need help? Check the <a href="/docs" target="_blank">documentation</a>
-        </p>
-      </div>
-    `;
-  };
+    try {
+      // Create setup guide using Svarog-UI components
+      const setupSection = Section({
+        children: [
+          Typography({
+            children: '🚀 Welcome to Svarog-UI + Storyblok',
+            variant: 'heading',
+          }),
+          Typography({
+            children: "Let's get your website up and running!",
+            variant: 'body',
+          }),
+          Typography({
+            children: `
+              <ol>
+                <li>Add your Storyblok token to .env</li>
+                <li>Create a story called "home" in Storyblok</li>
+                <li>Add some components (hero, text, cards)</li>
+                <li>Refresh this page</li>
+              </ol>
+            `,
+            variant: 'body',
+          }),
+          Button({
+            text: 'Check Again',
+            onClick: () => window.location.reload(),
+            variant: 'primary',
+          }),
+        ],
+        variant: 'default',
+      });
 
-  /**
-   * Get current theme
-   */
-  const getCurrentTheme = () => {
-    return document.body.className.match(/theme-(\w+)/)?.[1] || 'default';
+      container.innerHTML = '';
+      container.appendChild(setupSection.getElement());
+    } catch (svarogError) {
+      console.warn('Failed to create Svarog-UI setup guide:', svarogError);
+      // Minimal fallback
+      container.innerHTML = `
+        <div>
+          <h1>🚀 Welcome to Svarog-UI + Storyblok</h1>
+          <p>Let's get your website up and running!</p>
+          <button onclick="window.location.reload()">Check Again</button>
+        </div>
+      `;
+    }
   };
 
   /**
@@ -316,9 +354,8 @@ export const createApp = (config = {}) => {
    */
   const getStatus = () => {
     return {
-      ready: document.body.classList.contains('app-ready'),
+      ready: Boolean(currentStory),
       currentRoute,
-      currentTheme: getCurrentTheme(),
       cacheStats: storyblok.getCacheStats(),
       storyLoaded: !!currentStory,
     };
@@ -344,9 +381,6 @@ export const createApp = (config = {}) => {
 
     // Clear container
     container.innerHTML = '';
-
-    // Remove ready class
-    document.body.classList.remove('app-ready');
   };
 
   // Public API
@@ -359,7 +393,6 @@ export const createApp = (config = {}) => {
     ...(isDevelopment() && {
       storyblok,
       refreshContent,
-      getCurrentTheme,
     }),
   };
 };

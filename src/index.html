@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Svarog-UI + Storyblok Integration - Build beautiful websites in minutes"
+      content="Svarog-UI + Storyblok Integration - Pure component library styling"
     />
     <title>Svarog-UI + Storyblok Template</title>
 
@@ -14,9 +14,12 @@
     <link rel="preconnect" href="https://api.storyblok.com" />
     <link rel="preconnect" href="https://a.storyblok.com" />
 
-    <!-- Critical CSS for initial paint -->
+    <!-- 
+      MINIMAL Critical CSS - Only app structure, NO STYLING
+      All visual styling comes from Svarog-UI components
+    -->
     <style>
-      /* Critical CSS for initial load */
+      /* Only CSS reset and accessibility - NO THEMING */
       * {
         box-sizing: border-box;
         margin: 0;
@@ -26,129 +29,31 @@
       html,
       body {
         height: 100%;
-        font-family:
-          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        line-height: 1.6;
+        /* Let Svarog-UI handle font-family, colors, etc. */
       }
 
-      body {
-        transition: opacity 0.3s ease;
-        background-color: var(--color-bg, #ffffff);
-        color: var(--color-text, #333333);
-      }
-
-      body:not(.app-ready) {
-        opacity: 0;
-      }
-
-      body.app-ready {
-        opacity: 1;
-      }
-
-      /* Loading state - Clean and minimal */
-      .app-loading {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+      #app {
         min-height: 100vh;
-        gap: 1.5rem;
+        /* Let Svarog-UI handle background, colors, etc. */
       }
 
-      .loading-spinner {
-        width: 48px;
-        height: 48px;
-        border: 3px solid rgba(0, 123, 255, 0.1);
-        border-top-color: #007bff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .loading-text {
-        color: #666;
-        font-size: 14px;
-      }
-
-      /* Error states - User-friendly */
-      .app-error,
-      .setup-guide {
-        max-width: 600px;
-        margin: 2rem auto;
-        padding: 2rem;
-        text-align: center;
-      }
-
-      .app-error h1 {
-        color: #dc3545;
-        margin-bottom: 1rem;
-      }
-
-      .setup-guide h1 {
-        color: #007bff;
-        margin-bottom: 1rem;
-      }
-
-      .button {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        background: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.2s;
-      }
-
-      .button:hover {
-        background: #0056b3;
-      }
-
-      .button-secondary {
-        background: #6c757d;
-      }
-
-      .button-secondary:hover {
-        background: #5a6268;
-      }
-
-      /* Hide development indicators in production */
-      .dev-only {
-        display: none;
-      }
-
-      /* Accessibility */
+      /* Only accessibility styles */
       .skip-link {
         position: absolute;
         top: -40px;
-        left: 10px;
+        left: 6px;
         background: #000;
         color: #fff;
-        padding: 8px 16px;
+        padding: 8px 12px;
         text-decoration: none;
         z-index: 1000;
-        border-radius: 4px;
       }
 
       .skip-link:focus {
-        top: 10px;
+        top: 6px;
       }
 
-      /* Print styles */
-      @media print {
-        .no-print {
-          display: none !important;
-        }
-      }
-
-      /* Reduced motion support */
+      /* Only reduced motion support */
       @media (prefers-reduced-motion: reduce) {
         * {
           animation-duration: 0.01ms !important;
@@ -156,6 +61,23 @@
           transition-duration: 0.01ms !important;
         }
       }
+
+      /* Only print styles */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+      }
+
+      /* 
+        NO MORE CSS HERE!
+        Everything else comes from Svarog-UI:
+        - Loading states
+        - Error states  
+        - Colors, typography, spacing
+        - Component styling
+        - Theme management
+      */
     </style>
 
     <!-- Storyblok Bridge for live preview -->
@@ -167,19 +89,15 @@
 
     <!-- Main application container -->
     <main id="app" role="main">
-      <!-- Initial loading state -->
-      <div class="app-loading">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Loading your website...</p>
-      </div>
+      <!-- 
+        Initial loading state will be handled by Svarog-UI components
+        NO custom loading HTML here
+      -->
     </main>
-
-    <!-- Development mode indicator (hidden in production) -->
-    <div id="dev-indicator" class="dev-only no-print"></div>
 
     <!-- 
       Webpack will automatically inject the bundled JavaScript here.
-      No manual script tags needed!
+      Svarog-UI will handle all visual aspects.
     -->
   </body>
 </html>

@@ -1,182 +1,50 @@
 /* File: src/styles/main.css */
 /**
- * Main application styles
- * Includes integration styles and theme overrides
+ * Minimal application styles - NO CUSTOM STYLING
+ * All visual styling should come from Svarog-UI components
  */
 
-/* Theme-specific body classes */
-body.theme-default {
-  background-color: var(--background-color, #ffffff);
-  color: var(--text-color, #212529);
+/* Only CSS reset and app structure - NO THEMING */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-body.theme-cabalou {
-  background-color: var(--background-color, #fefefe);
-  color: var(--text-color, #111827);
+html,
+body {
+  height: 100%;
+  font-family: inherit; /* Let Svarog-UI handle font families */
 }
 
-body.theme-muchandy {
-  background-color: var(--background-color, #fffdf7);
-  color: var(--text-color, #78350f);
-}
-
-/* Ensure Grid children are visible */
-.svarog-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--grid-columns, 12), 1fr);
-  gap: var(--grid-gap, 1rem);
-  margin: 1rem 0;
-}
-
-.svarog-grid > * {
-  grid-column: span var(--span, 4); /* Default to 4 columns for cards */
-}
-
-/* Responsive grid for cards */
-@media (max-width: 768px) {
-  .svarog-grid > * {
-    grid-column: span 12; /* Full width on mobile */
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .svarog-grid > * {
-    grid-column: span 6; /* Half width on tablet */
-  }
-}
-
-/* Ensure cards are visible with basic styling */
-.svarog-card {
-  background: var(--background-color, #ffffff);
-  border: 1px solid var(--border-color, #dee2e6);
-  border-radius: var(--border-radius, 0.375rem);
-  padding: 1rem;
-  box-shadow: var(--box-shadow, 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075));
-  margin-bottom: 1rem;
-}
-
-/* App Container */
 #app {
   min-height: 100vh;
-  position: relative;
 }
 
-/* Loading States */
-.app-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 50vh;
-  gap: 1rem;
-  padding: 2rem;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(0, 0, 0, 0.1);
-  border-top-color: var(--primary-color, #007bff);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Error States */
-.app-error {
-  text-align: center;
-  padding: 2rem;
-  max-width: 600px;
-  margin: 2rem auto;
-}
-
-.app-error h1 {
-  color: var(--danger-color, #dc3545);
-  margin-bottom: 1rem;
-}
-
-.app-error p {
-  margin-bottom: 1.5rem;
-  color: var(--text-secondary, #666);
-}
-
-.retry-button {
-  background-color: var(--primary-color, #007bff);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--border-radius, 4px);
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s;
-}
-
-.retry-button:hover {
-  background-color: var(--primary-hover, #0056b3);
-}
-
-.error-details {
-  margin-top: 1rem;
-  text-align: left;
-}
-
-.error-details summary {
-  cursor: pointer;
-  padding: 0.5rem;
-  background-color: var(--light-color, #f8f9fa);
-  border-radius: var(--border-radius, 4px);
-}
-
-.error-details pre {
-  background-color: var(--light-color, #f8f9fa);
-  padding: 1rem;
-  border-radius: var(--border-radius, 4px);
-  overflow-x: auto;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-}
-
-/* Component Fallback */
-.component-fallback {
-  padding: 1rem;
-  border: 2px dashed var(--border-color, #ccc);
-  background-color: var(--light-color, #f9f9f9);
-  border-radius: var(--border-radius, 4px);
-  margin: 1rem 0;
-}
-
-/* Accessibility */
+/* Accessibility only */
 .skip-link {
   position: absolute;
   top: -40px;
   left: 6px;
-  background-color: #000;
+  background: #000;
   color: #fff;
   padding: 8px 12px;
   text-decoration: none;
   z-index: 1000;
-  border-radius: var(--border-radius, 4px);
 }
 
 .skip-link:focus {
   top: 6px;
 }
 
-/* Print Styles */
+/* Print styles only */
 @media print {
-  .theme-switcher,
-  .debug-panel,
-  .error-boundary-ui {
+  .no-print {
     display: none !important;
   }
 }
 
-/* Reduced Motion Support */
+/* Reduced motion support only */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -185,18 +53,10 @@ body.theme-muchandy {
   }
 }
 
-/* Development Mode Indicator */
-body[data-env='development']::before {
-  content: 'DEV MODE';
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-  background-color: rgba(255, 152, 0, 0.9);
-  color: white;
-  padding: 4px 8px;
-  font-size: 11px;
-  font-weight: bold;
-  border-radius: 3px;
-  z-index: 9999;
-  pointer-events: none;
-}
+/* 
+  Everything else should come from Svarog-UI components:
+  - Colors, typography, spacing, shadows, etc.
+  - Component styling and variants
+  - Theme management
+  - Layout and grid systems
+*/

@@ -2,6 +2,7 @@
 /**
  * Environment configuration management
  * Centralizes all environment-specific settings and validation
+ * Simplified - no theme switching logic
  */
 
 /**
@@ -19,7 +20,6 @@ export const ENVIRONMENTS = {
  * @returns {string} Current environment
  */
 export const getCurrentEnvironment = () => {
-  // Webpack injects process.env at build time
   return process.env.NODE_ENV || ENVIRONMENTS.DEVELOPMENT;
 };
 
@@ -34,13 +34,11 @@ export const isEnvironment = env => {
 
 /**
  * Safe environment variable getter
- * Webpack replaces process.env variables at build time
  * @param {string} key - Environment variable key
  * @param {*} defaultValue - Default value
  * @returns {*} Environment variable value or default
  */
 const getEnvVar = (key, defaultValue) => {
-  // Webpack DefinePlugin replaces process.env.* at build time
   const envVars = {
     VITE_STORYBLOK_TOKEN: process.env.VITE_STORYBLOK_TOKEN,
     VITE_STORYBLOK_VERSION: process.env.VITE_STORYBLOK_VERSION,
@@ -69,7 +67,6 @@ const environmentConfig = {
     },
     debug: {
       showErrors: true,
-      enableThemeSwitcher: true,
       exposeDebugTools: true,
     },
   },
@@ -86,7 +83,6 @@ const environmentConfig = {
     },
     debug: {
       showErrors: true,
-      enableThemeSwitcher: false,
       exposeDebugTools: false,
     },
   },
@@ -103,7 +99,6 @@ const environmentConfig = {
     },
     debug: {
       showErrors: false,
-      enableThemeSwitcher: false,
       exposeDebugTools: false,
     },
   },
@@ -120,7 +115,6 @@ const environmentConfig = {
     },
     debug: {
       showErrors: true,
-      enableThemeSwitcher: false,
       exposeDebugTools: false,
     },
   },
@@ -136,7 +130,7 @@ export const getEnvironmentConfig = () => {
 };
 
 /**
- * Storyblok configuration with better error handling
+ * Storyblok configuration
  */
 export const getStoryblokConfig = () => {
   const token = getEnvVar('VITE_STORYBLOK_TOKEN');
@@ -185,7 +179,6 @@ export const getAppConfig = () => {
     baseURL: getEnvVar('VITE_BASE_URL', 'http://localhost:3000'),
     apiTimeout: 10000,
     maxRetries: 3,
-    defaultTheme: 'default',
     enableAnalytics: isEnvironment(ENVIRONMENTS.PRODUCTION),
     ...envConfig,
   };
@@ -203,10 +196,10 @@ export const getPerformanceConfig = () => {
     enableProfiling: envConfig.performance.enableMonitoring,
     logLevel: envConfig.performance.logLevel,
     targets: {
-      LCP: 2500, // Largest Contentful Paint
-      FID: 100, // First Input Delay
-      CLS: 0.1, // Cumulative Layout Shift
-      TTFB: 600, // Time to First Byte
+      LCP: 2500,
+      FID: 100,
+      CLS: 0.1,
+      TTFB: 600,
     },
   };
 };
@@ -219,14 +212,13 @@ export const getDebugConfig = () => {
 
   return {
     showErrors: envConfig.debug.showErrors,
-    enableThemeSwitcher: envConfig.debug.enableThemeSwitcher,
     exposeDebugTools: envConfig.debug.exposeDebugTools,
     enableConsoleLogging: !isEnvironment(ENVIRONMENTS.PRODUCTION),
   };
 };
 
 /**
- * Validates required environment variables (non-throwing version)
+ * Validates required environment variables
  * @returns {Object} Validation result
  */
 export const validateEnvironment = () => {
@@ -239,7 +231,6 @@ export const validateEnvironment = () => {
     warnings: [],
   };
 
-  // Only require token in production
   if (!token || token === 'your_preview_token_here') {
     if (env === ENVIRONMENTS.PRODUCTION) {
       result.isValid = false;
@@ -250,7 +241,6 @@ export const validateEnvironment = () => {
       );
     }
   } else {
-    // Validate token format
     if (!token.match(/^[a-zA-Z0-9_-]+$/)) {
       result.warnings.push('VITE_STORYBLOK_TOKEN format appears invalid');
     }
