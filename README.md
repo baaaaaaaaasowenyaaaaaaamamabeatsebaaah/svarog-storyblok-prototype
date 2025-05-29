@@ -2,22 +2,82 @@
 
 My personal template for building customer websites with Svarog-UI and Storyblok.
 
-## 🚀 New Customer Project
+## 🚀 New Customer Project Setup
+
+### 1. Clone and Initialize
 
 ```bash
-# 1. Clone and setup
+# Clone template
 git clone [this-repo] customer-name
 cd customer-name
+
+# Remove template git history
+rm -rf .git
+
+# Initialize new git repo
+git init
+
+# Install dependencies
 npm install
+```
 
-# 2. Run setup wizard
-npm run new:customer
+### 2. Configure Environment
 
-# 3. Import Storyblok components
+Create `.env` file from template:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```bash
+# Customer's Storyblok token
+VITE_STORYBLOK_TOKEN=their_preview_token_here
+VITE_STORYBLOK_VERSION=draft
+VITE_STORYBLOK_SPACE_ID=their_space_id
+
+# Customer's brand colors
+VITE_PRIMARY_COLOR=#007bff
+
+# Enable features as needed
+FEATURE_CONTACT_FORM=true
+FEATURE_BLOG=false
+FEATURE_ECOMMERCE=false
+```
+
+### 3. Update Project Info
+
+Edit `package.json`:
+
+```json
+{
+  "name": "customer-name-website",
+  "version": "1.0.0"
+}
+```
+
+### 4. Import Storyblok Components
+
+```bash
 npm run import:storyblok
+```
 
-# 4. Start development
+### 5. Start Development
+
+```bash
 npm run dev
+```
+
+### 6. Initial Git Commit
+
+```bash
+git add .
+git commit -m "Initial setup for [Customer Name]"
+
+# If you have a remote repo
+git remote add origin [customer-repo-url]
+git push -u origin main
 ```
 
 ## 📋 Common Tasks

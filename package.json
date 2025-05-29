@@ -12,8 +12,6 @@
     "start": "node server/index.js",
     "test": "vitest run",
     "lint": "eslint src/ --ext .js",
-    "new:customer": "node scripts/new-customer.js",
-    "init:git": "node scripts/init-customer-git.js",
     "import:storyblok": "node scripts/import-storyblok.js",
     "create:component": "node scripts/create-component.js",
     "deploy:railway": "railway up",
@@ -23,6 +21,9 @@
   "dependencies": {
     "@svarog-ui/theme-default": "^1.2.2",
     "compression": "^1.8.0",
+    "compression-webpack-plugin": "^11.1.0",
+    "core-js": "^3.42.0",
+    "css-minimizer-webpack-plugin": "^7.0.2",
     "dompurify": "^3.2.6",
     "express": "^4.19.2",
     "express-rate-limit": "^7.5.0",
