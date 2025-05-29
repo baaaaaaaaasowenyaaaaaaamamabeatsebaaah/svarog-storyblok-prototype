@@ -1,16 +1,16 @@
 // src/index.js
 /**
- * Main entry point for Svarog-UI + Storyblok integration
- * Applies muchandy theme and initializes the application
+ * Main entry point for Svarog-UI v5.0.0 + Storyblok integration
+ * Uses corrected theme system and proper package imports
  */
 
-// Import Svarog-UI CSS - THE ONLY CSS WE IMPORT
+// Import Svarog-UI CSS from v5.0.0 - THE ONLY CSS WE IMPORT
 import 'svarog-ui/dist/svarog-ui.css';
 
 // Import minimal application CSS (only reset and accessibility)
 import './styles/main.css';
 
-// Import application and theme management
+// Import application and corrected theme management
 import { createApp } from './app.js';
 import { initializeTheme } from './integration/themeManager.js';
 import { isDevelopment } from './utils/environment.js';
@@ -18,7 +18,8 @@ import { isDevelopment } from './utils/environment.js';
 // Initialize application when DOM is ready
 const init = async () => {
   try {
-    // Initialize muchandy theme from Svarog-UI
+    // Initialize theme system with muchandy as default
+    // This now properly uses the svarog-ui v5.0.0 architecture
     initializeTheme();
 
     // Get app container
@@ -41,9 +42,12 @@ const init = async () => {
       window.app = app;
 
       // Log successful initialization
-      console.log('🚀 Svarog-UI application initialized with muchandy theme');
+      console.log('🚀 Svarog-UI v5.0.0 + Storyblok application initialized');
+      console.log('🎨 Theme system initialized with muchandy theme');
       console.log('💡 Available commands:');
       console.log('  - window.app.getStatus()');
+      console.log('  - window.themeDebug.switch("cabalou")');
+      console.log('  - window.themeDebug.getAvailable()');
     }
 
     // Set up global error handling
@@ -87,7 +91,7 @@ const showCriticalError = error => {
       padding: 2rem;
       text-align: center;
     ">
-      <h1>Unable to Load Application</h1>
+      <h1>Unable to Load Svarog-UI v5.0.0 Application</h1>
       <p>We encountered an error while starting the application.</p>
       <button onclick="window.location.reload()" style="
         padding: 0.75rem 1.5rem;
@@ -137,8 +141,16 @@ if (isDevelopment()) {
         navigation.loadEventEnd - navigation.fetchStart
       );
       console.log(
-        `⚡ Svarog-UI app with muchandy theme loaded in ${loadTime}ms`
+        `⚡ Svarog-UI v5.0.0 app with muchandy theme loaded in ${loadTime}ms`
       );
+    }
+  });
+
+  // Listen for theme changes
+  window.addEventListener('themeChanged', event => {
+    console.log(`🎨 Theme changed to: ${event.detail.theme}`);
+    if (event.detail.previous) {
+      console.log(`🎨 Previous theme was: ${event.detail.previous}`);
     }
   });
 }

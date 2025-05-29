@@ -1,13 +1,177 @@
 // src/app.js
 /**
  * Main application for Svarog-UI + Storyblok integration
- * Uses Svarog-UI components with muchandy theme
+ * Uses available components and creates fallbacks for missing ones
  */
 
 import { createStoryblokClient } from './integration/storyblokClient.js';
 import { isDevelopment } from './utils/environment.js';
-// Import Svarog-UI components for UI states
-import { Typography, Button, Card, Section, Header } from 'svarog-ui';
+
+// Import what's actually available from svarog-ui-core
+import {
+  Button,
+  Card,
+  CollapsibleHeader,
+  // ContactInfo - available but not needed for basic setup
+} from 'svarog-ui-core';
+
+/**
+ * Create fallback components for missing exports
+ */
+const createTypography = (props = {}) => {
+  const element = document.createElement(
+    props.variant === 'heading' ? 'h1' : 'p'
+  );
+  element.className = `svarog-typography ${props.className || ''}`.trim();
+
+  if (props.children) {
+    if (typeof props.children === 'string') {
+      element.innerHTML = props.children;
+    } else {
+      element.textContent = String(props.children);
+    }
+  }
+
+  // Apply basic styling
+  if (props.variant === 'heading') {
+    element.style.cssText = `
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 1rem 0;
+      color: var(--svarog-text, #2D1810);
+    `;
+  } else {
+    element.style.cssText = `
+      font-size: 1rem;
+      line-height: 1.6;
+      margin: 0.5rem 0;
+      color: var(--svarog-text, #2D1810);
+    `;
+  }
+
+  if (props.alignment === 'center') {
+    element.style.textAlign = 'center';
+  }
+
+  return {
+    getElement: () => element,
+    update: newProps => {
+      if (newProps.children) {
+        if (typeof newProps.children === 'string') {
+          element.innerHTML = newProps.children;
+        } else {
+          element.textContent = String(newProps.children);
+        }
+      }
+    },
+    destroy: () => element.remove(),
+  };
+};
+
+const createSection = (props = {}) => {
+  const element = document.createElement('section');
+  element.className = `svarog-section ${props.className || ''}`.trim();
+
+  // Apply basic styling
+  element.style.cssText = `
+    padding: ${props.padding === 'large' ? '3rem 1rem' : props.padding === 'small' ? '1rem' : '2rem 1rem'};
+    background: var(--svarog-background, #FDF8F0);
+  `;
+
+  if (props.variant === 'minor') {
+    element.style.backgroundColor = 'var(--svarog-surface, white)';
+  }
+
+  // Handle children
+  if (props.children && Array.isArray(props.children)) {
+    props.children.forEach(child => {
+      if (child && child.getElement) {
+        element.appendChild(child.getElement());
+      }
+    });
+  }
+
+  return {
+    getElement: () => element,
+    update: newProps => {
+      // Update logic if needed
+    },
+    destroy: () => {
+      element.remove();
+    },
+  };
+};
+
+const createHeader = (props = {}) => {
+  // Use CollapsibleHeader as base, or create simple header
+  try {
+    // Try to use CollapsibleHeader if it works with our props
+    return CollapsibleHeader({
+      logo: props.logo,
+      navigation: props.navigation,
+      ...props,
+    });
+  } catch (error) {
+    console.warn('CollapsibleHeader failed, using simple header:', error);
+
+    // Fallback to simple header
+    const element = document.createElement('header');
+    element.className = 'svarog-header';
+    element.style.cssText = `
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: var(--svarog-surface, white);
+      border-bottom: 1px solid var(--svarog-border, #E6D5C7);
+    `;
+
+    // Add logo
+    if (props.logo) {
+      const logo = document.createElement('a');
+      logo.href = props.logo.href || '/';
+      logo.textContent = props.logo.alt || 'Logo';
+      logo.style.cssText = `
+        font-weight: bold;
+        color: var(--svarog-primary, #8B4A6B);
+        text-decoration: none;
+      `;
+      element.appendChild(logo);
+    }
+
+    // Add navigation
+    if (props.navigation && Array.isArray(props.navigation)) {
+      const nav = document.createElement('nav');
+      nav.style.cssText = 'display: flex; gap: 1rem;';
+
+      props.navigation.forEach(item => {
+        const link = document.createElement('a');
+        link.href = item.href || '#';
+        link.textContent = item.text || 'Link';
+        link.style.cssText = `
+          color: var(--svarog-text, #2D1810);
+          text-decoration: none;
+          padding: 0.5rem;
+          ${item.active ? 'font-weight: bold; color: var(--svarog-primary, #8B4A6B);' : ''}
+        `;
+        nav.appendChild(link);
+      });
+
+      element.appendChild(nav);
+    }
+
+    return {
+      getElement: () => element,
+      update: () => {},
+      destroy: () => element.remove(),
+    };
+  }
+};
+
+// Create component aliases
+const Typography = createTypography;
+const Section = createSection;
+const Header = createHeader;
 
 /**
  * Creates the main application
@@ -106,12 +270,12 @@ export const createApp = (config = {}) => {
         ? story.renderedComponents
         : await storyblok.createComponentsFromStory(story);
 
-    // Add navigation if needed using Svarog-UI
+    // Add navigation if needed
     if (!container.querySelector('header')) {
       addDefaultNavigation();
     }
 
-    // Render Svarog-UI components
+    // Render components
     const elements = components.map(component => {
       const element = component.getElement();
       container.appendChild(element);
@@ -133,11 +297,11 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Add default navigation using Svarog-UI Header component
+   * Add default navigation using Header component
    */
   const addDefaultNavigation = () => {
     try {
-      // Create navigation using Svarog-UI Header component
+      // Create navigation using Header component
       const headerComponent = Header({
         logo: {
           alt: 'Website Logo',
@@ -158,16 +322,13 @@ export const createApp = (config = {}) => {
       const headerElement = headerComponent.getElement();
       container.insertBefore(headerElement, container.firstChild);
     } catch (error) {
-      console.warn(
-        'Failed to create Svarog-UI header, using minimal fallback:',
-        error
-      );
-      // Minimal fallback without custom styling
+      console.warn('Failed to create header, using minimal fallback:', error);
+      // Minimal fallback
       const nav = document.createElement('nav');
       nav.innerHTML = `
-        <div>
-          <a href="/">Home</a>
-          <a href="/about">About</a>
+        <div style="padding: 1rem; background: var(--svarog-surface, white);">
+          <a href="/" style="margin-right: 1rem;">Home</a>
+          <a href="/about" style="margin-right: 1rem;">About</a>
           <a href="/contact">Contact</a>
         </div>
       `;
@@ -229,13 +390,14 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Show loading state using Svarog-UI components
+   * Show loading state using Card component
    */
   const showLoadingState = () => {
     try {
-      // Use Svarog-UI Card and Typography for loading
+      // Use available Card component for loading
       const loadingCard = Card({
-        children: 'Loading content...',
+        title: 'Loading...',
+        content: 'Loading your content...',
         variant: 'default',
       });
 
@@ -243,9 +405,10 @@ export const createApp = (config = {}) => {
       container.innerHTML = '';
       container.appendChild(loadingCard.getElement());
     } catch (error) {
-      console.warn('Failed to create Svarog-UI loading state:', error);
+      console.warn('Failed to create loading state:', error);
       // Minimal fallback
-      container.innerHTML = '<div>Loading...</div>';
+      container.innerHTML =
+        '<div style="padding: 2rem; text-align: center;">Loading...</div>';
     }
   };
 
@@ -257,11 +420,11 @@ export const createApp = (config = {}) => {
   };
 
   /**
-   * Show error state using Svarog-UI components
+   * Show error state using available components
    */
   const showErrorState = error => {
     try {
-      // Create error display using Svarog-UI components
+      // Create error display using available components
       const errorSection = Section({
         children: [
           Typography({
@@ -285,25 +448,32 @@ export const createApp = (config = {}) => {
 
       container.innerHTML = '';
       container.appendChild(errorSection.getElement());
-    } catch (svarogError) {
-      console.warn('Failed to create Svarog-UI error state:', svarogError);
-      // Minimal fallback without styling
+    } catch (componentError) {
+      console.warn('Failed to create component error state:', componentError);
+      // Minimal fallback without components
       container.innerHTML = `
-        <div>
+        <div style="padding: 2rem; text-align: center;">
           <h1>Unable to Load Application</h1>
           <p>${error.message}</p>
-          <button onclick="window.location.reload()">Try Again</button>
+          <button onclick="window.location.reload()" style="
+            padding: 0.5rem 1rem;
+            background: var(--svarog-primary, #8B4A6B);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          ">Try Again</button>
         </div>
       `;
     }
   };
 
   /**
-   * Show setup guide using Svarog-UI components
+   * Show setup guide using available components
    */
   const showSetupGuide = () => {
     try {
-      // Create setup guide using Svarog-UI components
+      // Create setup guide using available components
       const setupSection = Section({
         children: [
           Typography({
@@ -336,14 +506,21 @@ export const createApp = (config = {}) => {
 
       container.innerHTML = '';
       container.appendChild(setupSection.getElement());
-    } catch (svarogError) {
-      console.warn('Failed to create Svarog-UI setup guide:', svarogError);
+    } catch (componentError) {
+      console.warn('Failed to create component setup guide:', componentError);
       // Minimal fallback
       container.innerHTML = `
-        <div>
+        <div style="padding: 2rem;">
           <h1>🚀 Welcome to Svarog-UI + Storyblok</h1>
           <p>Let's get your website up and running!</p>
-          <button onclick="window.location.reload()">Check Again</button>
+          <button onclick="window.location.reload()" style="
+            padding: 0.5rem 1rem;
+            background: var(--svarog-primary, #8B4A6B);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          ">Check Again</button>
         </div>
       `;
     }
