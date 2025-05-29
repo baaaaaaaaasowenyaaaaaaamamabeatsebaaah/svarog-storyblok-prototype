@@ -1,233 +1,175 @@
 // src/integration/themeManager.js
 
 /**
- * @fileoverview Theme Manager for Svarog-UI with actual published packages
- * Uses correct package versions: muchandy@1.3.4, default@1.4.4, cabalou@1.3.4
+ * @fileoverview Theme management system for Svarog-UI
+ * Handles theme initialization and application using actual theme packages
  */
 
-import { ThemeManager } from 'svarog-ui-core';
-import muchandyTheme from '@svarog-ui/theme-muchandy';
-import defaultTheme from '@svarog-ui/theme-default';
-import cabalouTheme from '@svarog-ui/theme-cabalou';
 import { isDevelopment } from '../utils/environment.js';
 
-/**
- * Available themes with their imported objects
- */
-const AVAILABLE_THEMES = {
-  muchandy: muchandyTheme,
+// Import themes from their packages
+import defaultTheme from '@svarog-ui/theme-default';
+import { muchandyTheme } from '@svarog-ui/theme-muchandy';
+
+// Available themes
+const availableThemes = {
   default: defaultTheme,
-  cabalou: cabalouTheme,
+  muchandy: muchandyTheme,
 };
 
-/**
- * Current active theme
- */
-let currentTheme = null;
+// Current active theme
+let currentTheme = 'default';
 
 /**
- * Initialize the theme system with muchandy as default
+ * Initialize and apply the theme system
+ * @param {string} themeName - Theme name to initialize with
+ * @returns {void}
  */
-export const initializeTheme = () => {
+export const initializeTheme = (themeName = 'default') => {
   try {
-    if (isDevelopment()) {
-      console.log('🔧 Initializing theme system...');
-      console.log('Theme objects loaded:', {
-        muchandy: !!muchandyTheme,
-        default: !!defaultTheme,
-        cabalou: !!cabalouTheme
-      });
-      
-      // Log theme object structure for debugging
-      Object.entries(AVAILABLE_THEMES).forEach(([name, theme]) => {
-        if (theme) {
-          console.log(`Theme ${name}:`, {
-            hasApply: typeof theme.apply === 'function',
-            hasRemove: typeof theme.remove === 'function',
-            name: theme.name,
-            keys: Object.keys(theme)
-          });
-        }
-      });
-    }
+    // Get saved theme from localStorage or use provided default
+    const savedTheme = localStorage.getItem('svarog-theme') || themeName;
 
-    // Register all available themes with the ThemeManager
-    Object.entries(AVAILABLE_THEMES).forEach(([name, themeObject]) => {
-      if (themeObject) {
-        try {
-          if (typeof themeObject.apply === 'function') {
-            ThemeManager.register(name, themeObject);
-            if (isDevelopment()) {
-              console.log(`✅ Registered theme: ${name}`);
-            }
-          } else {
-            console.warn(`Theme ${name} missing apply() method:`, themeObject);
-          }
-        } catch (regError) {
-          console.warn(`Failed to register theme ${name}:`, regError);
-        }
-      } else {
-        console.warn(`Theme ${name} not loaded properly`);
-      }
-    });
-
-    // Get saved theme or use muchandy as default
-    const savedTheme = localStorage.getItem('svarog-theme') || 'muchandy';
-    
     // Apply the theme
-    switchToTheme(savedTheme);
+    applyTheme(savedTheme);
 
     if (isDevelopment()) {
-      console.log('✅ Theme system initialized');
-      console.log('🎨 Available themes:', Object.keys(AVAILABLE_THEMES));
-      console.log('🎨 Active theme:', savedTheme);
-      
-      // Expose theme utilities for debugging
-      window.themeDebug = {
-        switch: switchToTheme,
-        getCurrent: getActiveTheme,
-        getAvailable: getAvailableThemes,
-        themes: AVAILABLE_THEMES,
-        themeManager: ThemeManager,
+      console.log(`✅ Theme system initialized with: ${savedTheme}`);
+
+      // Make theme switching available globally for debugging
+      window.switchToTheme = theme => {
+        applyTheme(theme);
+        console.log(`🎨 Switched to theme: ${theme}`);
       };
+
+      window.getAvailableThemes = () => Object.keys(availableThemes);
     }
   } catch (error) {
-    console.error('❌ Failed to initialize theme system:', error);
-    
-    // Fallback: try to apply muchandy theme directly
-    try {
-      if (muchandyTheme && typeof muchandyTheme.apply === 'function') {
-        muchandyTheme.apply();
-        currentTheme = 'muchandy';
-        console.log('🔧 Applied muchandy theme as fallback');
-      } else {
-        // CSS fallback
-        applyFallbackMuchandyStyles();
-      }
-    } catch (fallbackError) {
-      console.error('❌ Fallback theme application failed:', fallbackError);
-      applyFallbackMuchandyStyles();
-    }
+    console.error('Failed to initialize theme system:', error);
+    applyFallbackStyles();
   }
 };
 
 /**
- * CSS fallback for muchandy theme if theme objects fail
+ * Apply a theme by name
+ * @param {string} themeName - Theme to apply
  */
-const applyFallbackMuchandyStyles = () => {
-  document.body.classList.add('muchandy-theme');
-  document.documentElement.setAttribute('data-theme', 'muchandy');
-  
-  // Apply muchandy colors via CSS variables
-  const root = document.documentElement;
-  root.style.setProperty('--svarog-primary', '#8B4A6B');
-  root.style.setProperty('--svarog-secondary', '#D4A574');
-  root.style.setProperty('--svarog-accent', '#E8B87E');
-  root.style.setProperty('--svarog-background', '#FDF8F0');
-  root.style.setProperty('--svarog-text', '#2D1810'); 
-  
-  currentTheme = 'muchandy';
-  console.log('🎨 CSS fallback: Muchandy theme applied');
-};
+export const applyTheme = themeName => {
+  const theme = availableThemes[themeName];
 
-/**
- * Switch to a specific theme
- * @param {string} themeName - Name of theme to switch to
- * @returns {boolean} Success status
- */
-export const switchToTheme = (themeName) => {
-  try {
-    const themeObject = AVAILABLE_THEMES[themeName];
-    
-    if (!themeObject) {
-      console.warn(`Theme "${themeName}" not available. Available themes:`, Object.keys(AVAILABLE_THEMES));
-      return false;
-    }
+  if (!theme) {
+    console.warn(`Theme "${themeName}" not found, falling back to default`);
+    themeName = 'default';
+  }
 
-    if (typeof themeObject.apply !== 'function') {
-      console.error(`Theme "${themeName}" does not have apply() method:`, themeObject);
-      return false;
-    }
+  const themeToApply = availableThemes[themeName];
 
-    // Remove current theme if any
-    if (currentTheme && AVAILABLE_THEMES[currentTheme]?.remove) {
-      try {
-        AVAILABLE_THEMES[currentTheme].remove();
-      } catch (removeError) {
-        console.warn(`Failed to remove current theme ${currentTheme}:`, removeError);
+  if (themeToApply && typeof themeToApply.apply === 'function') {
+    // Remove previous theme first
+    if (currentTheme !== themeName) {
+      const previousTheme = availableThemes[currentTheme];
+      if (previousTheme && typeof previousTheme.remove === 'function') {
+        previousTheme.remove();
       }
     }
 
     // Apply new theme
-    themeObject.apply();
+    themeToApply.apply();
     currentTheme = themeName;
-    
-    // Save theme preference
+
+    // Save to localStorage
     localStorage.setItem('svarog-theme', themeName);
-    
-    // Update body class for CSS hooks
+
+    // Update body class for additional styling hooks
     document.body.className = document.body.className
       .replace(/theme-\w+/g, '')
       .trim();
     document.body.classList.add(`theme-${themeName}`);
-    document.documentElement.setAttribute('data-theme', themeName);
 
     if (isDevelopment()) {
-      console.log(`🎨 Switched to theme: ${themeName}`);
+      console.log(`🎨 Applied theme: ${themeName}`);
     }
 
     // Dispatch theme change event
-    window.dispatchEvent(new CustomEvent('themeChanged', {
-      detail: { theme: themeName, previous: currentTheme }
-    }));
-
-    return true;
-  } catch (error) {
-    console.error(`Failed to switch to theme "${themeName}":`, error);
-    
-    // Fallback to CSS-based theme switching
-    if (themeName === 'muchandy') {
-      applyFallbackMuchandyStyles();
-      return true;
-    }
-    
-    return false;
+    window.dispatchEvent(
+      new CustomEvent('themeChanged', {
+        detail: { theme: themeName },
+      })
+    );
+  } else {
+    console.error(`Theme "${themeName}" does not have an apply() method`);
+    applyFallbackStyles();
   }
 };
 
 /**
- * Get currently active theme name
- * @returns {string|null} Active theme name
+ * Get current active theme name
+ * @returns {string} Current theme name
  */
-export const getActiveTheme = () => {
-  return currentTheme;
-};
+export const getCurrentTheme = () => currentTheme;
 
 /**
- * Get list of available theme names
- * @returns {string[]} Available theme names
+ * Get list of available themes
+ * @returns {Array<string>} Available theme names
  */
 export const getAvailableThemes = () => {
-  return Object.keys(AVAILABLE_THEMES);
+  return Object.keys(availableThemes).filter(name => availableThemes[name]);
 };
 
 /**
- * Check if a theme is available
- * @param {string} themeName - Theme name to check
- * @returns {boolean} True if theme is available
+ * Switch to a different theme
+ * @param {string} themeName - Theme to switch to
  */
-export const isThemeAvailable = (themeName) => {
-  return Object.hasOwnProperty.call(AVAILABLE_THEMES, themeName);
+export const switchTheme = themeName => {
+  applyTheme(themeName);
 };
 
 /**
- * Get theme object by name (for advanced usage)
- * @param {string} themeName - Theme name
- * @returns {Object|null} Theme object or null
+ * Apply fallback styles if theme loading fails
  */
-export const getThemeObject = (themeName) => {
-  return AVAILABLE_THEMES[themeName] || null;
+const applyFallbackStyles = () => {
+  const fallbackCSS = `
+    :root {
+      --color-brand-primary: #007bff;
+      --color-brand-primary-dark: #0056b3;
+      --color-brand-primary-light: #66b3ff;
+      --color-bg: #ffffff;
+      --color-text: #212529;
+      --color-text-white: #ffffff;
+      --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-size-base: 1rem;
+      --font-size-xl: 1.25rem;
+      --space-2: 0.5rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --button-bg: var(--color-brand-primary);
+      --button-color: var(--color-text-white);
+      --button-hover-bg: var(--color-brand-primary-dark);
+      --button-padding: var(--space-2) var(--space-5);
+      --card-bg: var(--color-bg);
+      --card-padding: var(--space-6);
+    }
+    
+    .default-theme {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+  `;
+
+  let styleEl = document.getElementById('svarog-theme-fallback');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'svarog-theme-fallback';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = fallbackCSS;
+
+  // Add theme class
+  document.documentElement.classList.add('default-theme');
+  document.body.classList.add('default-theme');
+
+  console.warn('Applied fallback theme styles');
 };
 
-// Export default theme initialization function
+// Export for use in app initialization
 export default initializeTheme;

@@ -93,7 +93,7 @@ const createSection = (props = {}) => {
 
   return {
     getElement: () => element,
-    update: newProps => {
+    update: _newProps => {
       // Update logic if needed
     },
     destroy: () => {

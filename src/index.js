@@ -4,9 +4,6 @@
  * Uses corrected theme system and proper package imports
  */
 
-// Import Svarog-UI CSS from v5.0.0 - THE ONLY CSS WE IMPORT
-import 'svarog-ui/dist/svarog-ui.css';
-
 // Import minimal application CSS (only reset and accessibility)
 import './styles/main.css';
 
